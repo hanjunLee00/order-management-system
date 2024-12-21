@@ -1,15 +1,24 @@
 package toy.order.domain.member;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
 @Repository
 public class MemberRepository {
+    private final DataSource dataSource;
     private static Map<Long, Member> store = new HashMap<>();
     private static long sequence = 0L;
+
+    public MemberRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public Member save (Member member) {
         member.setId(++sequence);
@@ -35,5 +44,12 @@ public class MemberRepository {
 
     public void clearStore() {
         store.clear();
+    }
+
+    private Connection getConnection() throws SQLException {
+        //주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다.
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        log.info("get connection={} class={}", con, con.getClass());
+        return con;
     }
 }
