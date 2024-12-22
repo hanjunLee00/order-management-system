@@ -2,6 +2,7 @@ package toy.order.domain.item;
 
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +11,13 @@ import java.util.Map;
 
 @Repository
 public class ItemRepository {
+
+    public ItemRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    private final DataSource dataSource;
+
     private static final Map<Long, Item> store = new HashMap<>();
     private static long sequence = 0L;
 
