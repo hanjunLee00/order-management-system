@@ -26,6 +26,12 @@
                 </button>
             </form>
         </div>
+        <div class="col">
+                <button class="w-100 btn btn-dark btn-lg" type="button"
+                        th:onclick="|location.href='@{/members/{memberId}/edit(memberId=${member.memberId})}'|">
+                    회원정보 수정
+                </button>
+        </div>
     </div>
     <hr class="my-4">
 </div> <!-- /container -->

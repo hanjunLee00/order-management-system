@@ -2,10 +2,12 @@ package toy.order.domain.member;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Data
 public class Member {
-    private Long id;
+    private Long memberId;
 
     @NotEmpty
     private String loginId;

@@ -20,14 +20,23 @@ public class TestDataInit {
 
     @PostConstruct
     public void init() {
-        itemRepository.save(new Item("itemA", 10000, 10));
-        itemRepository.save(new Item("itemB", 20000, 20));
 
         Member member = new Member();
-        member.setLoginId("test");
+        String basicId = "test";
+        String newId = generateNewId(basicId);
+        member.setLoginId(newId);
         member.setPassword("test");
         member.setName("테스터");
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+        Long memberId = savedMember.getMemberId();
+
+        itemRepository.save(new Item("itemA", 10000, 10, memberId));
+        itemRepository.save(new Item("itemB", 20000, 20, memberId));
+
+    }
+
+    private String generateNewId (String basicId) {
+        return basicId + "_" + System.currentTimeMillis();
     }
 }
