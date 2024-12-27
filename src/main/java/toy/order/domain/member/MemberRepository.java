@@ -24,14 +24,27 @@ public class MemberRepository {
     }
 
     public Member save(Member member) {
-        String sql = "insert into member(login_id, name, password) values (?, ?, ?)";
-        template.update(sql, member.getLoginId(), member.getName(), member.getPassword());
+        String sql = "insert into member(login_id, name, password, uuid) values (?, ?, ?, ?)";
+
+        // 로그 추가: SQL 실행 전 Member 객체 필드 출력
+        System.out.println("Executing SQL Insert with Member: " +
+                "LoginId=" + member.getLoginId() +
+                ", Name=" + member.getName() +
+                ", Password=" + member.getPassword() +
+                ", UUID=" + member.getUuid());
+
+        template.update(sql, member.getLoginId(), member.getName(), member.getPassword(), member.getUuid());
+
+        // 로그 추가: SQL 실행 후 확인
+        System.out.println("Member saved successfully with UUID: " + member.getUuid());
+
         return member;
     }
 
-    public void update(Long memberId, String name, String loginId, String password) {
-        String sql = "update member set login_id=?, name=?, password=? where member_id=?";
-        template.update(sql, loginId, name, password, memberId);
+
+    public void update(String uuid, String name, String loginId, String password) {
+        String sql = "update member set login_id=?, name=?, password=? where uuid=?";
+        template.update(sql, loginId, name, password, uuid);
     }
 
     public void delete(String loginId) {
@@ -48,6 +61,12 @@ public class MemberRepository {
         return template.queryForObject(sql, memberRowMapper(), memberId);
     }
 
+    public Member findByUuid(String uuid) {
+        String sql = "select * from member where uuid = ?";
+        return template.queryForObject(sql, memberRowMapper(), uuid);
+
+    }
+
     private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) -> {
             Member member = new Member();
@@ -55,6 +74,7 @@ public class MemberRepository {
             member.setLoginId(rs.getString(2));
             member.setName(rs.getString(3));
             member.setPassword(rs.getString(4));
+            member.setUuid(rs.getString(5));
             return member;
         };
     }

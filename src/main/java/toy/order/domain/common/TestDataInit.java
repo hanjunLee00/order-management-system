@@ -8,6 +8,8 @@ import toy.order.domain.item.ItemRepository;
 import toy.order.domain.member.Member;
 import toy.order.domain.member.MemberRepository;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class TestDataInit {
@@ -27,6 +29,7 @@ public class TestDataInit {
         member.setLoginId(newId);
         member.setPassword("test");
         member.setName("테스터");
+        member.setUuid(UUID.randomUUID().toString());
 
         Member savedMember = memberRepository.save(member);
         Long memberId = savedMember.getMemberId();

@@ -17,4 +17,6 @@ public class Member {
 
     @NotEmpty
     private String password;
+
+    private String uuid;
 }
