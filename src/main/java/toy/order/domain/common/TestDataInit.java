@@ -24,9 +24,8 @@ public class TestDataInit {
     public void init() {
 
         Member member = new Member();
-        String basicId = "test";
-        String newId = generateNewId(basicId);
-        member.setLoginId(newId);
+//        String basicId = "test";
+        member.setLoginId("test");
         member.setPassword("test");
         member.setName("테스터");
         member.setUuid(UUID.randomUUID().toString());

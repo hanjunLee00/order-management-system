@@ -25,14 +25,6 @@ public class MemberRepository {
 
     public Member save(Member member) {
         String sql = "insert into member(login_id, name, password, uuid) values (?, ?, ?, ?)";
-
-        // 로그 추가: SQL 실행 전 Member 객체 필드 출력
-        System.out.println("Executing SQL Insert with Member: " +
-                "LoginId=" + member.getLoginId() +
-                ", Name=" + member.getName() +
-                ", Password=" + member.getPassword() +
-                ", UUID=" + member.getUuid());
-
         template.update(sql, member.getLoginId(), member.getName(), member.getPassword(), member.getUuid());
 
         // 로그 추가: SQL 실행 후 확인
@@ -67,6 +59,7 @@ public class MemberRepository {
 
     }
 
+    //쿼리 실행 결과를 객체로 매핑하여 반환
     private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) -> {
             Member member = new Member();
@@ -87,5 +80,12 @@ public class MemberRepository {
     public List<Member> findAll() {
         String sql = "select * from member";
         return template.query(sql, memberRowMapper());
+    }
+
+    // 로그인 ID 중복 검사
+    public boolean existsByLoginId(String loginId) {
+        String sql = "SELECT COUNT(*) FROM member WHERE login_id = ?";
+        Integer count = template.queryForObject(sql, Integer.class, loginId);
+        return count != null && count > 0; // 중복이 있으면 true 반환
     }
 }
