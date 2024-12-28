@@ -1,42 +1,20 @@
 package toy.order.domain.item;
 
-import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Repository
-public class ItemRepository {
+public interface ItemRepository {
 
-    private final DataSource dataSource;
+    Item save (Item item);
 
-    public ItemRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    void update(Long itemId, Item itemParam);
 
-    private static final Map<Long, Item> store = new HashMap<>();
-    private static long sequence = 0L;
+    void delete(Long itemId);
 
-    public Item save(Item item) {
-        item.setId(++sequence);
-        store.put(item.getId(), item);
-        return item;
-    }
+    Item findByItemId(Long itemId);
 
-    public Item findById(Long id) { return store.get(id); }
+    List<Item> findByUuid(String uuid);
 
-    public List<Item> findAll() {return new ArrayList<>(store.values());}
+    Long findItemIdByItemNameAndMemberId(String itemName, Long memberId);
 
-    public void update(Long itemId, Item updateParam) {
-        Item findItem = findById(itemId);
-        findItem.setItemName(updateParam.getItemName());
-        findItem.setPrice(updateParam.getPrice());
-        findItem.setQuantity(updateParam.getQuantity());
-    }
-
-    public void clearStore() {store.clear();}
+    List<Item> findAll();
 }

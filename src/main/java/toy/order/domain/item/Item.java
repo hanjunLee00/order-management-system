@@ -1,24 +1,21 @@
 package toy.order.domain.item;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-@Setter
+@RequiredArgsConstructor
+@Data
 public class Item {
-    private Long id;
+
+    private Long itemId;
+
     private String itemName;
+
     private Integer price;
+
     private Integer quantity;
+
     private Long memberId;
-
-    public Item(){
-    }
-
-    public Item(String itemName, Integer price, Integer quantity, Long memberId) {
-        this.itemName = itemName;
-        this.price = price;
-        this.quantity = quantity;
-        this.memberId = memberId;
-    }
 }

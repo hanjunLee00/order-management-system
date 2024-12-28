@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import toy.order.domain.member.Member;
 import toy.order.domain.member.MemberRepository;
+import toy.order.domain.member.MemberRepositoryJdbc;
 
 @Service
 @RequiredArgsConstructor

@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import toy.order.domain.common.resolver.CurrentMember;
 import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.Member;
-import toy.order.domain.member.MemberRepository;
+import toy.order.domain.member.MemberRepositoryJdbc;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryJdbc memberRepositoryJdbc;
 
     @GetMapping("/")
     public String homeLogin(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember, Model model) {

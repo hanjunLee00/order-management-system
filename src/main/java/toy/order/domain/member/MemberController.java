@@ -13,6 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/members")
 public class MemberController {
+
     private final MemberRepository memberRepository;
 
     @GetMapping("/add")

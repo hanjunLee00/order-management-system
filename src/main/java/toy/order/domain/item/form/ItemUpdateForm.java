@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Range;
 @Data
 public class ItemUpdateForm {
     @NotNull
-    private Long id;
+    private Long itemId;
 
     @NotBlank
     private String itemName;
