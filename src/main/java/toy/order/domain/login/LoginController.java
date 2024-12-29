@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.Member;
 
 @Slf4j
@@ -26,10 +27,10 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute LoginForm form,
+    public String login(@Valid @ModelAttribute("loginForm") LoginForm form,
                         BindingResult bindingResult,
                         @RequestParam(defaultValue = "/") String redirectURL,
-                        HttpServletRequest request) {
+                        HttpSession session) {
         if(bindingResult.hasErrors()) {
             return "login/loginForm";
         }
@@ -41,8 +42,8 @@ public class LoginController {
             return "login/loginForm";
         }
 
-        HttpSession session = request.getSession(true);
-        session.setAttribute("loginMember", loginMember);
+        session.setAttribute(SessionConst.LOGIN_MEMBER_ID, loginMember.getLoginId());
+        session.setAttribute(SessionConst.LOGIN_MEMBER_NAME, loginMember.getName());
 
         return "redirect:" + redirectURL;
     }

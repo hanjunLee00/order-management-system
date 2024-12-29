@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import toy.order.domain.common.resolver.CurrentMember;
 import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.item.form.ItemSaveForm;
 import toy.order.domain.item.form.ItemUpdateForm;
@@ -26,7 +27,7 @@ public class ItemController {
     }
 
     @GetMapping("/uuid/{uuid}")
-    public String items(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember,
+    public String items(@CurrentMember Member loginMember,
                         @PathVariable String uuid, Model model) {
         List<Item> itemList = itemRepository.findByUuid(uuid);
         model.addAttribute("items", itemList);
@@ -35,7 +36,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public String item(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember,
+    public String item(@CurrentMember Member loginMember,
                        @PathVariable Long itemId, Model model){
         Item item = itemRepository.findByItemId(itemId);
         model.addAttribute("item", item);
@@ -44,7 +45,7 @@ public class ItemController {
     }
 
     @GetMapping("/add")
-    public String addForm(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember, Model model){
+    public String addForm(@CurrentMember Member loginMember, Model model){
         Item newItem = new Item();
         model.addAttribute("item",newItem);
         model.addAttribute("member", loginMember);
@@ -52,7 +53,7 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public String addItem(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember,
+    public String addItem(@CurrentMember Member loginMember,
                           Model model,
                           @Validated @ModelAttribute("item") ItemSaveForm form,
                           BindingResult bindingResult, RedirectAttributes redirectAttributes){
@@ -90,7 +91,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/edit")
     public String edit (
-            @SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember, Model model,
+            @CurrentMember Member loginMember, Model model,
             @PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult){
         if(form.getPrice() != null && form.getQuantity() != null) {
             int resultPrice = form.getPrice()*form.getQuantity();

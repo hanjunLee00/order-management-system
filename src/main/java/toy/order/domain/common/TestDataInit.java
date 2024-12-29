@@ -10,7 +10,7 @@ import toy.order.domain.member.MemberRepositoryJdbc;
 
 import java.util.UUID;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class TestDataInit {
     private final ItemRepositoryJdbc itemRepository;
@@ -21,7 +21,7 @@ public class TestDataInit {
      * 멤버별 아이템 조회 가능하게
      */
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         Member memberA = new Member();
         Member memberB = new Member();

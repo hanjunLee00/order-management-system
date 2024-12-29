@@ -18,23 +18,23 @@ public class HomeController {
 
     private final MemberRepositoryJdbc memberRepositoryJdbc;
 
-    @GetMapping("/")
-    public String homeLogin(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember, Model model) {
-        //세션에 데이터가 없으면 home
-        if (loginMember == null) {
-            return "home";
-        }
-
-        //세션이 유지되면 로그인으로 이동
-        model.addAttribute("member", loginMember);
-        return "loginHome";
-    }
-
-
-
 //    @GetMapping("/")
+//    public String homeLogin(@SessionAttribute(name= SessionConst.LOGIN_MEMBER, required=false) Member loginMember, Model model) {
+//        //세션에 데이터가 없으면 home
+//        if (loginMember == null) {
+//            return "home";
+//        }
+//
+//        //세션이 유지되면 로그인으로 이동
+//        model.addAttribute("member", loginMember);
+//        return "loginHome";
+//    }
+
+
+
+    @GetMapping("/")
     public String homeLoginArgumentResolver(@CurrentMember Member loginMember, Model model) {
-        if(loginMember != null) {
+        if(loginMember == null) {
             return "home";
         }
 
