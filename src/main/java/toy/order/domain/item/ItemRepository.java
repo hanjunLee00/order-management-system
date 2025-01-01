@@ -12,9 +12,9 @@ public interface ItemRepository {
 
     Item findByItemId(Long itemId);
 
-    List<Item> findByUuid(String uuid);
-
     Long findItemIdByItemNameAndMemberId(String itemName, Long memberId);
+
+    Long findMemberIdByItemId(Long itemId);
 
     List<Item> findAll();
 }

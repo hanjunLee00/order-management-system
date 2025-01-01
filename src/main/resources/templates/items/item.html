@@ -1,6 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{header :: header}"></header> <!--공통 헤더-->
+
+<main class="container">
+
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
@@ -9,10 +14,6 @@
             max-width: 560px;
         }
     </style>
-</head>
-<body>
-
-<div class="container">
 
     <div class="py-5 text-center">
         <h2 th:text="#{page.item}">상품 상세</h2>
@@ -50,11 +51,11 @@
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='items.html'"
-                    th:onclick="|location.href='@{/items/uuid/{uuid}(uuid=${member.uuid})}'|"
+                    th:onclick="|location.href='@{/items/items}'|"
                     type="button" th:text="#{button.cancel}">취소</button>
         </div>
     </div>
 
-</div> <!-- /container -->
+</main> <!-- /container -->
 </body>
 </html>

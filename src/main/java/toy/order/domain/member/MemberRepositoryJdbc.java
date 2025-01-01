@@ -31,6 +31,12 @@ public class MemberRepositoryJdbc implements MemberRepository {
     }
 
     @Override
+    public void updateBalance(Long memberId, double money){
+        String sql = "update member set balance=? where member_id=?";
+        template.update(sql, money, memberId);
+    }
+
+    @Override
     public void delete(String loginId) {
         String sql = "delete from member where login_id=?";
         template.update(sql, loginId);
@@ -52,7 +58,6 @@ public class MemberRepositoryJdbc implements MemberRepository {
     public Member findByUuid(String uuid) {
         String sql = "select * from member where uuid = ?";
         return template.queryForObject(sql, memberRowMapper(), uuid);
-
     }
 
     //쿼리 실행 결과를 객체로 매핑하여 반환

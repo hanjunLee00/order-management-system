@@ -36,17 +36,6 @@ public class ItemRepositoryJdbc implements ItemRepository {
     }
 
     @Override
-    public List<Item> findByUuid(String uuid) {
-        String sql = """
-        SELECT i.*
-        FROM item i
-        JOIN member m ON i.member_id = m.member_id
-        WHERE m.uuid = ?
-        """;
-        return jdbcTemplate.query(sql, itemRowMapper(), uuid);
-    }
-
-    @Override
     public Long findItemIdByItemNameAndMemberId(String itemName, Long memberId) {
         String sql = """
         SELECT i.item_id 
@@ -55,6 +44,18 @@ public class ItemRepositoryJdbc implements ItemRepository {
         WHERE i.item_name = ? AND m.member_id = ?
     """;
         return jdbcTemplate.queryForObject(sql, Long.class, itemName, memberId);
+    }
+
+    @Override
+    public Long findMemberIdByItemId(Long itemId){
+        String sql = """
+        SELECT m.member_id
+        FROM member m
+        JOIN item i
+        ON i.member_id = m.member_id
+        WHERE i.item_id = ?
+        """;
+        return jdbcTemplate.queryForObject(sql, Long.class, itemId);
     }
 
     @Override

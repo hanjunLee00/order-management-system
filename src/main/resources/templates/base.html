@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+  <title>Order Management System</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<header>
+    <div style="text-align: right;">
+      <div th:if="${session.loginMemberId == null}">
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/members/add}">Register</a>
+      </div>
+      <div th:if="${session.loginMemberId != null}">
+          <span th:text="'Hello, ' + ${session.loginMemberName} + '!'">Hello, User!</span>
+          <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit">Logout</button>
+          </form>
+      </div>
+    </div>
+</header>
+
+<main th:fragment="content">
+  <!-- 페이지별 내용이 여기에 삽입됩니다 -->
+</main>
+
+<footer>
+  <!-- 공통 푸터 (필요 시) -->
+</footer>
+</body>
+</html>

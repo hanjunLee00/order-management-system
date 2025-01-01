@@ -11,9 +11,9 @@ public interface MemberRepository {
     Optional<Member> findByLoginId(String loginId);
     List<Member> findAll();
     void update(String uuid, String name, String loginId, String password);
+    void updateBalance(Long memberId, double money);
     void delete(String loginId);
     Long findMemberIdByLoginId(String loginId);
-    //아이디 중복 체크 로직
     boolean existsByLoginId(String loginId);
 
 }

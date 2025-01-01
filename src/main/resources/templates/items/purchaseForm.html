@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{header :: header}"></header> <!-- 공통 헤더 -->
+
+<main class="container" style="max-width: 600px; margin-top: 50px;">
+
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <form th:action="@{|/items/${member.uuid}/purchase/${item.itemId}|}"  th:object="${item}" method="post">
+
+        <div class="text-center">
+            <h2 th:text="#{page.purchaseForm}">상품 구매</h2>
+        </div>
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
+        </div>
+
+        <div class="mb-3">
+            <label for="itemName" class="form-label" th:text="#{label.item.itemName}">상품명</label>
+            <input type="text" id="itemName" class="form-control" th:value="${item.itemName}" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label" th:text="#{label.item.price}">가격</label>
+            <input type="text" id="price" class="form-control" th:value="${item.price}" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label" th:text="#{label.item.quantity}">재고량</label>
+            <input type="text" id="quantity" class="form-control" th:value="${item.quantity}" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="purchaseQuantity" class="form-label" th:text="#{label.purchase.quantity}">구매 수량</label>
+            <input type="number" id="purchaseQuantity" name="quantity"
+                   th:errorclass="field-error" class="form-control" required>
+            <div class="field-error" th:errors="*{quantity}">
+                구매 수량 오류
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="balance" class="form-label" th:text="#{label.member.balance}">보유 잔액</label>
+            <input type="number" id="balance" class="form-control" th:value="${member.balance}" readonly>
+        </div>
+
+        <button type="submit" class="btn btn-primary" th:text="#{button.purchase}">구매하기</button>
+        <a th:href="@{/items/items}" class="btn btn-secondary" th:text="#{button.cancel}">취소</a>
+    </form>
+</main>
+
+</body>
+</html>

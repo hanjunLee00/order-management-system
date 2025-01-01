@@ -1,5 +1,6 @@
 package toy.order.domain.item;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -10,26 +11,26 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import toy.order.domain.common.resolver.CurrentMember;
 import toy.order.domain.common.session.SessionConst;
+import toy.order.domain.item.form.ItemPurchaseForm;
 import toy.order.domain.item.form.ItemSaveForm;
 import toy.order.domain.item.form.ItemUpdateForm;
 import toy.order.domain.member.Member;
+import toy.order.domain.member.MemberRepository;
 
 import java.util.List;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
     private final ItemRepository itemRepository;
+    private final ItemService itemService;
+    private final MemberRepository memberRepository;
 
-    public ItemController(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
-    }
-
-    @GetMapping("/uuid/{uuid}")
-    public String items(@CurrentMember Member loginMember,
-                        @PathVariable String uuid, Model model) {
-        List<Item> itemList = itemRepository.findByUuid(uuid);
+    @GetMapping("/items")
+    public String items(@CurrentMember Member loginMember, Model model) {
+        List<Item> itemList = itemRepository.findAll();
         model.addAttribute("items", itemList);
         model.addAttribute("member", loginMember);
         return "items/items";
@@ -113,6 +114,56 @@ public class ItemController {
 
         itemRepository.update(itemId, itemParam);
         return "redirect:/items/{itemId}";
+    }
+
+    @GetMapping("/{uuid}/purchase/{itemId}")
+    public String purchaseForm(@CurrentMember Member loginMember, Model model,
+                               @PathVariable Long itemId, @PathVariable String uuid){
+        if(memberRepository.findByUuid(uuid) == null){
+            throw new IllegalArgumentException();
+        }
+
+        Item item = itemRepository.findByItemId(itemId);
+        model.addAttribute("item", item);
+        model.addAttribute("member", loginMember);
+        return "items/purchaseForm";
+    }
+
+    @PostMapping("/{uuid}/purchase/{itemId}")
+    public String purchase(@CurrentMember Member loginMember, Model model,
+                           @PathVariable Long itemId, @PathVariable String uuid,
+                           @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult){
+        log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
+        if(memberRepository.findByUuid(uuid) == null){
+            throw new IllegalArgumentException();
+        }
+
+        double resultPrice = 0;
+        Item item = itemRepository.findByItemId(itemId);
+        if (item == null){
+            return "redirect:/items/items";
+        }
+        log.info("Found item: {}", item);
+
+        if (item.getPrice() !=null && item.getQuantity() !=null){
+            resultPrice = item.getPrice()*form.getQuantity();
+            log.info("resultPrice={}", resultPrice);
+            if (form.getQuantity() > item.getQuantity())
+                bindingResult.reject("outOfStock", new Object[]{item.getQuantity(), form.getQuantity()}, null);
+            if (resultPrice > loginMember.getBalance())
+                bindingResult.reject("insufficientBalance", new Object[]{loginMember.getBalance() ,resultPrice}, null);
+        }
+
+        if (bindingResult.hasErrors()){
+            log.info("errors={}", bindingResult);
+            return "redirect:/items/purchaseForm";
+        }
+
+        model.addAttribute("member", loginMember);
+        Long fromId = loginMember.getMemberId();
+        Long toId = itemRepository.findMemberIdByItemId(itemId);
+        itemService.purchase(fromId, toId, resultPrice);
+        return "items/items";
     }
 
 }

@@ -1,11 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{:: header}"></header>
+<div class="container">
+
+</div>
   <meta charset="utf-8">
   <link th:href="@{/css/bootstrap.min.css}"
         href="css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
 <div class="container" style="max-width: 600px">
   <div class="py-5 text-center">
     <h2>홈 화면</h2>
