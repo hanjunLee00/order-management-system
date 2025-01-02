@@ -10,5 +10,6 @@ import org.hibernate.validator.constraints.Range;
 public class ItemPurchaseForm {
 
     @NotNull
+    @Range(min = 1)
     private Integer quantity;
 }

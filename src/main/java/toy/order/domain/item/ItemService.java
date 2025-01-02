@@ -16,8 +16,9 @@ public class ItemService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void purchase(Long fromId, Long toId, double money){
+    public void purchase(Long fromId, Long toId, double money, Item item, Integer quantity){
         purchaseLogic(fromId, toId, money);
+        itemDeductLogic(item, quantity);
     }
 
     // 상품을 구매하면 totalPrice를 계산해서 from에서 차감, to에서 증가
@@ -28,6 +29,11 @@ public class ItemService {
 
         memberRepository.updateBalance(fromId, fromMember.getBalance() - money);
         memberRepository.updateBalance(toId, toMember.getBalance() + money);
+    }
+
+    private void itemDeductLogic(Item item, Integer quantity){
+        Integer updateQuantity = item.getQuantity() - quantity;
+        itemRepository.updateCnt(item, updateQuantity);
     }
 
 }

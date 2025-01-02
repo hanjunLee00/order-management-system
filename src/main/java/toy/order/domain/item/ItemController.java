@@ -134,16 +134,19 @@ public class ItemController {
                            @PathVariable Long itemId, @PathVariable String uuid,
                            @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult){
 
+        double resultPrice = 0;
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
+
         if(memberRepository.findByUuid(uuid) == null){
             throw new IllegalArgumentException();
         }
 
-        double resultPrice = 0;
         Item item = itemRepository.findByItemId(itemId);
+
         if (item == null){
             return "items/items";
         }
+
         log.info("Found item: {}", item);
 
         if (item.getPrice() !=null && item.getQuantity() !=null){
@@ -157,12 +160,14 @@ public class ItemController {
 
         if (bindingResult.hasErrors()){
             System.out.println("bindingResult = " + bindingResult);
+            model.addAttribute("member", loginMember);
+            model.addAttribute("item", item);
             return "items/purchaseForm";
         }
 
         Long fromId = loginMember.getMemberId();
         Long toId = itemRepository.findMemberIdByItemId(itemId);
-        itemService.purchase(fromId, toId, resultPrice);
+        itemService.purchase(fromId, toId, resultPrice, item, form.getQuantity());
         model.addAttribute("member", loginMember);
         return "items/items";
     }

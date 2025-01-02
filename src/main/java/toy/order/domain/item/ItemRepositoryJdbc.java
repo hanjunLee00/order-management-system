@@ -30,6 +30,12 @@ public class ItemRepositoryJdbc implements ItemRepository {
     }
 
     @Override
+    public void updateCnt(Item item, Integer quantity) {
+        String sql = "update item set quantity = ? where item_id = ?";
+        jdbcTemplate.update(sql, quantity, item.getItemId());
+    }
+
+    @Override
     public void delete(Long itemId) {
         String sql = "delete from item where item_id = ?";
         jdbcTemplate.update(sql, itemId);

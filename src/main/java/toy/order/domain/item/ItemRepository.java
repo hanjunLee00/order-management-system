@@ -8,6 +8,8 @@ public interface ItemRepository {
 
     void update(Long itemId, Item itemParam);
 
+    void updateCnt(Item item, Integer quantity);
+
     void delete(Long itemId);
 
     Item findByItemId(Long itemId);
