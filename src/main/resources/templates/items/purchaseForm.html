@@ -10,14 +10,14 @@
     <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
 
-    <form th:action="@{|/items/${member.uuid}/purchase/${item.itemId}|}"  th:object="${item}" method="post">
-
-        <div class="text-center">
-            <h2 th:text="#{page.purchaseForm}">상품 구매</h2>
-        </div>
+    <form th:action="@{/items/{uuid}/purchase/{itemId}(uuid=${member.uuid},itemId=${item.itemId})}"  th:object="${item}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
+        </div>
+
+        <div class="text-center">
+            <h2 th:text="#{page.purchaseForm}">상품 구매</h2>
         </div>
 
         <div class="mb-3">

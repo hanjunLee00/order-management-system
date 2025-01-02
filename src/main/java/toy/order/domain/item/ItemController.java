@@ -133,6 +133,7 @@ public class ItemController {
     public String purchase(@CurrentMember Member loginMember, Model model,
                            @PathVariable Long itemId, @PathVariable String uuid,
                            @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult){
+
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
         if(memberRepository.findByUuid(uuid) == null){
             throw new IllegalArgumentException();
@@ -141,13 +142,13 @@ public class ItemController {
         double resultPrice = 0;
         Item item = itemRepository.findByItemId(itemId);
         if (item == null){
-            return "redirect:/items/items";
+            return "items/items";
         }
         log.info("Found item: {}", item);
 
         if (item.getPrice() !=null && item.getQuantity() !=null){
             resultPrice = item.getPrice()*form.getQuantity();
-            log.info("resultPrice={}", resultPrice);
+            System.out.println("resultPrice = " + resultPrice);
             if (form.getQuantity() > item.getQuantity())
                 bindingResult.reject("outOfStock", new Object[]{item.getQuantity(), form.getQuantity()}, null);
             if (resultPrice > loginMember.getBalance())
@@ -155,14 +156,14 @@ public class ItemController {
         }
 
         if (bindingResult.hasErrors()){
-            log.info("errors={}", bindingResult);
-            return "redirect:/items/purchaseForm";
+            System.out.println("bindingResult = " + bindingResult);
+            return "items/purchaseForm";
         }
 
-        model.addAttribute("member", loginMember);
         Long fromId = loginMember.getMemberId();
         Long toId = itemRepository.findMemberIdByItemId(itemId);
         itemService.purchase(fromId, toId, resultPrice);
+        model.addAttribute("member", loginMember);
         return "items/items";
     }
 
