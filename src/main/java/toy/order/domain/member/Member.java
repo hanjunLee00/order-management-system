@@ -18,7 +18,8 @@ public class Member {
     @NotEmpty
     private String password;
 
-    private double balance;
-
     private String uuid;
+
+    private Double balance;
+
 }

@@ -12,6 +12,8 @@
         <button onclick="location.href='/members/add'">Register</button>
       </div>
       <div th:if="${session.loginMemberId != null}">
+        <button onclick="location.href='/'">홈</button>
+        <span th:text="'보유 잔액: ' +${session.loginMemberBalance}"></span>
         <button onclick="location.href='/items/items'">상품 조회</button>
         <button onclick="location.href='/members/uuid/{uuid}(uuid=${session.uuid})'">주문 내역</button>
         <span th:text="'Hello, ' + ${session.loginMemberName} + '!'">Hello, User!</span>

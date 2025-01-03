@@ -44,7 +44,7 @@ public class LoginController {
 
         session.setAttribute(SessionConst.LOGIN_MEMBER_ID, loginMember.getLoginId());
         session.setAttribute(SessionConst.LOGIN_MEMBER_NAME, loginMember.getName());
-
+        session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, loginMember.getBalance());
         return "redirect:" + redirectURL;
     }
 

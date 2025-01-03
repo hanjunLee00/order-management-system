@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{header :: header}"></header> <!-- 공통 헤더 -->
+
+<main class="container" style="max-width: 600px; margin-top: 50px;">
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <form th:action="@{/members/{uuid}/charge(uuid=${member.uuid})}"
+          th:object="${chargeForm}" method="post">
+        <div class="text-center">
+            <h2 th:text="#{page.chargeForm}">잔액 충전</h2>
+        </div>
+
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+
+        <div class="mb-3">
+            <label for="currentBalance" class="form-label" th:text="#{label.member.balance}">현재 잔액</label>
+            <input type="number" id="currentBalance" class="form-control"
+                   th:value="${member.balance}" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label" th:text="#{label.member.amount}">충전 금액</label>
+            <input type="number" id="amount" th:field="*{amount}"
+                   th:errorclass="field-error" class="form-control" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('amount')}">
+                <p th:each="err : ${#fields.errors('amount')}" th:text="${err}"></p>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" th:text="#{button.charge}">충전하기</button>
+        <a th:href="@{/}" class="btn btn-secondary" th:text="#{button.cancel}">취소</a>
+    </form>
+</main>
+
+</body>
+</html>

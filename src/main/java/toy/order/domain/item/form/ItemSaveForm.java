@@ -14,7 +14,7 @@ public class ItemSaveForm {
 
     @NotNull
     @Range(min = 1000, max = 1000000)
-    private Integer price;
+    private Double price;
 
     @NotNull
     @Max(value = 9999)

@@ -59,7 +59,7 @@ public class ItemController {
                           @Validated @ModelAttribute("item") ItemSaveForm form,
                           BindingResult bindingResult, RedirectAttributes redirectAttributes){
         if (form.getPrice() != null && form.getQuantity() != null) {
-            int resultPrice = form.getPrice()*form.getQuantity();
+            double resultPrice = form.getPrice()*form.getQuantity();
             if (resultPrice < 10000) {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
@@ -95,7 +95,7 @@ public class ItemController {
             @CurrentMember Member loginMember, Model model,
             @PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult){
         if(form.getPrice() != null && form.getQuantity() != null) {
-            int resultPrice = form.getPrice()*form.getQuantity();
+            double resultPrice = form.getPrice()*form.getQuantity();
             if (resultPrice < 10000) {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
@@ -137,12 +137,7 @@ public class ItemController {
         double resultPrice = 0;
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
 
-        if(memberRepository.findByUuid(uuid) == null){
-            throw new IllegalArgumentException();
-        }
-
         Item item = itemRepository.findByItemId(itemId);
-
         if (item == null){
             return "items/items";
         }
@@ -153,9 +148,9 @@ public class ItemController {
             resultPrice = item.getPrice()*form.getQuantity();
             System.out.println("resultPrice = " + resultPrice);
             if (form.getQuantity() > item.getQuantity())
-                bindingResult.reject("outOfStock", new Object[]{item.getQuantity(), form.getQuantity()}, null);
+                bindingResult.rejectValue("quantity", "outOfStock", "재고 부족");
             if (resultPrice > loginMember.getBalance())
-                bindingResult.reject("insufficientBalance", new Object[]{loginMember.getBalance() ,resultPrice}, null);
+                bindingResult.rejectValue("quantity", "insufficientBalance", "잔액 부족");
         }
 
         if (bindingResult.hasErrors()){

@@ -15,7 +15,7 @@ public class ItemUpdateForm {
 
     @NotNull
     @Range(min = 0, max = 1000000)
-    private Integer price;
+    private Double price;
 
     @NotNull
     private Integer quantity;

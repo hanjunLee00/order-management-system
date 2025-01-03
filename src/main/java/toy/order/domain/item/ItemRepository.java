@@ -19,4 +19,6 @@ public interface ItemRepository {
     Long findMemberIdByItemId(Long itemId);
 
     List<Item> findAll();
+
+    Double findPriceByItemId(Long itemId);
 }

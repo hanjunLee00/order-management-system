@@ -1,5 +1,6 @@
 package toy.order.domain.member;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,9 +32,9 @@ public class MemberRepositoryJdbc implements MemberRepository {
     }
 
     @Override
-    public void updateBalance(Long memberId, double money){
+    public void updateBalance(Long memberId, double amount){
         String sql = "update member set balance=? where member_id=?";
-        template.update(sql, money, memberId);
+        template.update(sql, amount, memberId);
     }
 
     @Override
@@ -69,6 +70,7 @@ public class MemberRepositoryJdbc implements MemberRepository {
             member.setName(rs.getString(3));
             member.setPassword(rs.getString(4));
             member.setUuid(rs.getString(5));
+            member.setBalance(rs.getDouble(6));
             return member;
         };
     }
@@ -90,5 +92,11 @@ public class MemberRepositoryJdbc implements MemberRepository {
         String sql = "SELECT COUNT(*) FROM member WHERE login_id = ?";
         Integer count = template.queryForObject(sql, Integer.class, loginId);
         return count != null && count > 0; // 중복이 있으면 true 반환
+    }
+
+    public boolean existsByUuid(String uuid) {
+        String sql = "SELECT COUNT(*) FROM member WHERE uuid = ?";
+        Integer count = template.queryForObject(sql, Integer.class, uuid);
+        return count != null && count > 0;
     }
 }

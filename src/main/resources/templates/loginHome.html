@@ -37,6 +37,12 @@
         </div>
     </div>
     <hr class="my-4">
+        <div class = "col">
+            <button class="w-100 btn btn-dark btn-lg" type="button"
+                    th:onclick="|location.href='@{/members/{uuid}/charge(uuid=${member.uuid})}'|">
+                충전하기
+            </button>
+        </div>
 </main> <!-- /container -->
 </body>
 </html>

@@ -70,6 +70,12 @@ public class ItemRepositoryJdbc implements ItemRepository {
         return jdbcTemplate.queryForObject(sql, itemRowMapper(), itemId);
     };
 
+    @Override
+    public Double findPriceByItemId(Long itemId){
+        String sql = "select price from item where item_id = ?";
+        return jdbcTemplate.queryForObject(sql, Double.class, itemId);
+    }
+
 
     //쿼리 실행 결과를 객체로 매핑하여 반환
     private RowMapper<Item> itemRowMapper() {
@@ -77,7 +83,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
             Item item = new Item();
             item.setItemId(rs.getLong(1));
             item.setItemName(rs.getString(2));
-            item.setPrice(rs.getInt(3));
+            item.setPrice(rs.getDouble(3));
             item.setQuantity(rs.getInt(4));
             item.setMemberId(rs.getLong(5));
             return item;

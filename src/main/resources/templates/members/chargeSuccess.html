@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
+<body>
+<header th:replace="~{header :: header}"></header>
+
+<main class="container">
+
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}"
+        href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container {
+      max-width: 560px;
+    }
+    .success-message {
+      color: #28a745;
+    }
+  </style>
+
+  <div class="py-5 text-center">
+    <h2>충전 완료</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-body text-center">
+      <p class="success-message">충전이 성공적으로 완료되었습니다!</p>
+      <p><strong th:text="${member.name}"></strong>님,</p>
+      <p>총 <strong th:text="${chargeForm.amount}"></strong>원이 충전되었습니다.</p>
+      <p>현재 잔액: <strong th:text="${member.balance}"></strong>원</p>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <div class="row">
+    <div class="col">
+      <button class="w-100 btn btn-primary btn-lg"
+              onclick="location.href='/'"
+              th:onclick="|location.href='@{/}'|"
+              type="button">홈으로 이동</button>
+    </div>
+    <div class="col">
+      <button class="w-100 btn btn-secondary btn-lg"
+              onclick="location.href='/items/items'"
+              th:onclick="|location.href='@{/items/items}'|"
+              type="button">상품 주문</button>
+    </div>
+  </div>
+
+</main> <!-- /container -->
+</body>
+</html>
