@@ -16,13 +16,13 @@ public class ItemService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void purchase(Long fromId, Long toId, double money, Item item, Integer quantity){
+    public void purchase(Long fromId, Long toId, int money, Item item, Integer quantity){
         purchaseLogic(fromId, toId, money);
         itemDeductLogic(item, quantity);
     }
 
     // 상품을 구매하면 totalPrice를 계산해서 from에서 차감, to에서 증가
-    private void purchaseLogic(Long fromId, Long toId, double money){
+    private void purchaseLogic(Long fromId, Long toId, int money){
 
         Member fromMember = memberRepository.findByMemberId(fromId);
         Member toMember = memberRepository.findByMemberId(toId);

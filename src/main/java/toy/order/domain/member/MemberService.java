@@ -13,12 +13,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void charge(Member member, Double amount){
+    public void charge(Member member, Integer amount){
         chargeLogic(member, amount);
     }
 
-    private void chargeLogic(Member member, Double amount){
-        double updatedAmount = member.getBalance() + amount;
+    private void chargeLogic(Member member, Integer amount){
+        int updatedAmount = member.getBalance() + amount;
         memberRepository.updateBalance(member.getMemberId(), updatedAmount);
     }
 }

@@ -20,6 +20,6 @@ public class Member {
 
     private String uuid;
 
-    private Double balance;
+    private Integer balance;
 
 }

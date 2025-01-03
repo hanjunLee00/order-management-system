@@ -1,5 +1,6 @@
 package toy.order.domain.common;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -33,12 +34,15 @@ public class HomeController {
 
 
     @GetMapping("/")
-    public String homeLoginArgumentResolver(@CurrentMember Member loginMember, Model model) {
+    public String homeLoginArgumentResolver(@CurrentMember Member loginMember, Model model,
+                                            HttpSession session) {
         if(loginMember == null) {
             return "home";
         }
 
         model.addAttribute("member", loginMember);
+
+
         return "loginHome";
     }
 

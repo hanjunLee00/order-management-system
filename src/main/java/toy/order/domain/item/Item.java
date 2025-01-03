@@ -15,7 +15,7 @@ public class Item {
 
     private String itemName;
 
-    private Double price;
+    private Integer price;
 
     private Integer quantity;
 

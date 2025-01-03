@@ -32,7 +32,7 @@ public class MemberRepositoryJdbc implements MemberRepository {
     }
 
     @Override
-    public void updateBalance(Long memberId, double amount){
+    public void updateBalance(Long memberId, int amount){
         String sql = "update member set balance=? where member_id=?";
         template.update(sql, amount, memberId);
     }
@@ -70,7 +70,7 @@ public class MemberRepositoryJdbc implements MemberRepository {
             member.setName(rs.getString(3));
             member.setPassword(rs.getString(4));
             member.setUuid(rs.getString(5));
-            member.setBalance(rs.getDouble(6));
+            member.setBalance(rs.getInt(6));
             return member;
         };
     }
@@ -79,6 +79,24 @@ public class MemberRepositoryJdbc implements MemberRepository {
     public Optional<Member> findByLoginId(String loginId) {
         String sql = "select * from member where login_id = ?";
         return template.query(sql, memberRowMapper(), loginId).stream().findFirst();
+    }
+
+    @Override
+    public Integer findBalanceByUuid(String uuid) {
+        String sql = "select balance from member where uuid = ?";
+        return template.queryForObject(sql, Integer.class, uuid);
+    }
+
+    @Override
+    public String findNameByUuid(String uuid) {
+        String sql = "select name from member where uuid = ?";
+        return template.queryForObject(sql, String.class, uuid);
+    }
+
+    @Override
+    public String findLoginIdByUuid(String uuid){
+        String sql = "select login_id from member where uuid = ?";
+        return template.queryForObject(sql, String.class, uuid);
     }
 
     @Override

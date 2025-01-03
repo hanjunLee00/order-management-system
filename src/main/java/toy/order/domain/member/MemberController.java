@@ -1,11 +1,13 @@
 package toy.order.domain.member;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.form.ChargeForm;
 
 import java.util.UUID;
@@ -47,7 +49,8 @@ public class MemberController {
     }
 
     @PostMapping("/{uuid}/edit")
-    public String update(@PathVariable String uuid, @Valid @ModelAttribute Member member, BindingResult bindingResult){
+    public String update(@PathVariable String uuid, @Valid @ModelAttribute Member member,
+                         BindingResult bindingResult, HttpSession session) {
         if(bindingResult.hasErrors()){
             return "members/editMemberForm";
         }
@@ -63,6 +66,8 @@ public class MemberController {
             }
         }
         memberRepository.update(uuid, member.getName(), member.getLoginId(), member.getPassword());
+        session.setAttribute(SessionConst.LOGIN_MEMBER_ID, memberRepository.findLoginIdByUuid(uuid));
+        session.setAttribute(SessionConst.LOGIN_MEMBER_NAME, memberRepository.findNameByUuid(uuid));
         return "loginHome";
     }
 
@@ -81,7 +86,7 @@ public class MemberController {
     @PostMapping("/{uuid}/charge")
     public String charge(@PathVariable String uuid,
                          @Valid @ModelAttribute ChargeForm chargeForm,
-                         BindingResult bindingResult, Model model){
+                         BindingResult bindingResult, Model model, HttpSession session){
 
         if(bindingResult.hasErrors()){
             model.addAttribute("member", memberRepository.findByUuid(uuid));
@@ -99,6 +104,7 @@ public class MemberController {
         System.out.println("chargeForm = " + chargeForm.getAmount());
         memberService.charge(member, chargeForm.getAmount());
         model.addAttribute("member", member);
+        session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
         return "/members/chargeSuccess";
     }
 }

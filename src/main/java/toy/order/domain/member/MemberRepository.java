@@ -11,9 +11,12 @@ public interface MemberRepository {
     Optional<Member> findByLoginId(String loginId);
     List<Member> findAll();
     void update(String uuid, String name, String loginId, String password);
-    void updateBalance(Long memberId, double amount);
+    void updateBalance(Long memberId, int amount);
     void delete(String loginId);
     Long findMemberIdByLoginId(String loginId);
+    Integer findBalanceByUuid(String uuid);
+    String findNameByUuid(String uuid);
+    String findLoginIdByUuid(String uuid);
     boolean existsByLoginId(String loginId);
     boolean existsByUuid(String uuid);
 

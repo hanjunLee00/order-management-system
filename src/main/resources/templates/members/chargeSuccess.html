@@ -27,7 +27,7 @@
       <p class="success-message">충전이 성공적으로 완료되었습니다!</p>
       <p><strong th:text="${member.name}"></strong>님,</p>
       <p>총 <strong th:text="${chargeForm.amount}"></strong>원이 충전되었습니다.</p>
-      <p>현재 잔액: <strong th:text="${member.balance}"></strong>원</p>
+      <p>현재 잔액: <strong th:text="${member.balance + chargeForm.amount}"></strong>원</p>
     </div>
   </div>
 

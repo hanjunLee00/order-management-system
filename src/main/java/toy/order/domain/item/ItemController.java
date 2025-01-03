@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import toy.order.domain.common.resolver.CurrentMember;
-import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.item.form.ItemPurchaseForm;
 import toy.order.domain.item.form.ItemSaveForm;
 import toy.order.domain.item.form.ItemUpdateForm;
@@ -95,7 +94,7 @@ public class ItemController {
             @CurrentMember Member loginMember, Model model,
             @PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult){
         if(form.getPrice() != null && form.getQuantity() != null) {
-            double resultPrice = form.getPrice()*form.getQuantity();
+            int resultPrice = form.getPrice()*form.getQuantity();
             if (resultPrice < 10000) {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
@@ -134,7 +133,7 @@ public class ItemController {
                            @PathVariable Long itemId, @PathVariable String uuid,
                            @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult){
 
-        double resultPrice = 0;
+        int resultPrice = 0;
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
 
         Item item = itemRepository.findByItemId(itemId);

@@ -83,7 +83,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
             Item item = new Item();
             item.setItemId(rs.getLong(1));
             item.setItemName(rs.getString(2));
-            item.setPrice(rs.getDouble(3));
+            item.setPrice(rs.getInt(3));
             item.setQuantity(rs.getInt(4));
             item.setMemberId(rs.getLong(5));
             return item;
