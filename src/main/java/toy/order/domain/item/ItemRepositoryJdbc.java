@@ -1,13 +1,20 @@
 package toy.order.domain.item;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class ItemRepositoryJdbc implements ItemRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -74,6 +81,46 @@ public class ItemRepositoryJdbc implements ItemRepository {
     public Double findPriceByItemId(Long itemId){
         String sql = "select price from item where item_id = ?";
         return jdbcTemplate.queryForObject(sql, Double.class, itemId);
+    }
+
+    @Override
+    public List<Item> findItems(ItemSearchCond cond) {
+        String itemName = cond.getItemName();
+        Integer maxPrice = cond.getMaxPrice();
+
+        // MapSqlParameterSource로 변경
+        MapSqlParameterSource param = new MapSqlParameterSource();
+        if (StringUtils.hasText(itemName)) {
+            param.addValue("itemName", itemName);
+        }
+        if (maxPrice != null) {
+            param.addValue("maxPrice", maxPrice);
+        }
+
+        String sql = "select item_id, item_name, price, quantity, member_id from item";
+
+        // 동적 쿼리 구성
+        if (StringUtils.hasText(itemName) || maxPrice != null) {
+            sql += " where";
+        }
+
+        boolean andFlag = false;
+        if (StringUtils.hasText(itemName)) {
+            sql += " item_name like concat('%',:itemName,'%')";
+            andFlag = true;
+        }
+
+        if (maxPrice != null) {
+            if (andFlag) {
+                sql += " and";
+            }
+            sql += " price <= :maxPrice";
+        }
+
+        log.info("sql={}", sql);
+
+        NamedParameterJdbcTemplate namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+        return namedJdbcTemplate.query(sql, param, itemRowMapper());
     }
 
 

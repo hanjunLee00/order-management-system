@@ -85,8 +85,8 @@ public class MemberController {
 
     @PostMapping("/{uuid}/charge")
     public String charge(@PathVariable String uuid,
-                         @Valid @ModelAttribute ChargeForm chargeForm,
-                         BindingResult bindingResult, Model model, HttpSession session){
+                         @Valid @ModelAttribute ChargeForm chargeForm, BindingResult bindingResult,
+                         Model model, HttpSession session){
 
         if(bindingResult.hasErrors()){
             model.addAttribute("member", memberRepository.findByUuid(uuid));

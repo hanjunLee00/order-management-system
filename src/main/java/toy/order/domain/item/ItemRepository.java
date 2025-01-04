@@ -20,5 +20,7 @@ public interface ItemRepository {
 
     List<Item> findAll();
 
+    List<Item> findItems(ItemSearchCond cond);
+
     Double findPriceByItemId(Long itemId);
 }

@@ -49,7 +49,8 @@
             <input type="number" id="balance" class="form-control" th:value="${member.balance}" readonly>
         </div>
 
-        <button type="submit" class="btn btn-primary" th:text="#{button.purchase}">구매하기</button>
+        <button type="submit" class="btn btn-primary" th:text="#{button.purchase}"
+                th:disabled="${item.quantity == 0}">구매하기</button>
         <a th:href="@{/items/items}" class="btn btn-secondary" th:text="#{button.cancel}">취소</a>
     </form>
 </main>

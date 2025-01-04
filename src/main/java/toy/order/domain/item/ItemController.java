@@ -1,5 +1,6 @@
 package toy.order.domain.item;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import toy.order.domain.common.resolver.CurrentMember;
+import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.item.form.ItemPurchaseForm;
 import toy.order.domain.item.form.ItemSaveForm;
 import toy.order.domain.item.form.ItemUpdateForm;
@@ -28,8 +30,8 @@ public class ItemController {
     private final MemberRepository memberRepository;
 
     @GetMapping("/items")
-    public String items(@CurrentMember Member loginMember, Model model) {
-        List<Item> itemList = itemRepository.findAll();
+    public String items(@CurrentMember Member loginMember, @ModelAttribute("itemSearch") ItemSearchCond itemSearch, Model model) {
+        List<Item> itemList = itemRepository.findItems(itemSearch);
         model.addAttribute("items", itemList);
         model.addAttribute("member", loginMember);
         return "items/items";
@@ -131,7 +133,8 @@ public class ItemController {
     @PostMapping("/{uuid}/purchase/{itemId}")
     public String purchase(@CurrentMember Member loginMember, Model model,
                            @PathVariable Long itemId, @PathVariable String uuid,
-                           @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult){
+                           @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult,
+                           HttpSession session){
 
         int resultPrice = 0;
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
@@ -162,6 +165,10 @@ public class ItemController {
         Long fromId = loginMember.getMemberId();
         Long toId = itemRepository.findMemberIdByItemId(itemId);
         itemService.purchase(fromId, toId, resultPrice, item, form.getQuantity());
+
+        List<Item> itemList = itemRepository.findAll();
+        session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
+        model.addAttribute("items", itemList);
         model.addAttribute("member", loginMember);
         return "items/items";
     }
