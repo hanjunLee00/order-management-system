@@ -30,7 +30,7 @@
             </form>
         </div>
         <div class="col">
-                <button class="w-100 btn btn-dark btn-lg" type="button"
+                <button class="w-100 btn btn-primary btn-lg" type="button"
                         th:onclick="|location.href='@{/members/{uuid}/edit(uuid=${member.uuid})}'|">
                     회원정보 수정
                 </button>
@@ -38,7 +38,7 @@
     </div>
     <hr class="my-4">
         <div class = "col">
-            <button class="w-100 btn btn-dark btn-lg" type="button"
+            <button class="w-100 btn btn-success btn-lg" type="button"
                     th:onclick="|location.href='@{/members/{uuid}/charge(uuid=${member.uuid})}'|">
                 충전하기
             </button>

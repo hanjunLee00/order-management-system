@@ -1,86 +1,126 @@
 package toy.order.domain.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+import toy.order.domain.item.form.ItemUpdateForm;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @Slf4j
 public class ItemRepositoryJdbc implements ItemRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    KeyHolder keyHolder = new GeneratedKeyHolder(); //id로 key 자동 생성
 
     public ItemRepositoryJdbc(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("item")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Item save(Item item) {
-        String sql = "insert into item (item_name, price, quantity, member_id) values (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, item.getItemName(), item.getPrice(), item.getQuantity(), item.getMemberId());
+        SqlParameterSource param = new BeanPropertySqlParameterSource(item);
+        Number key = jdbcInsert.executeAndReturnKey(param);
+        item.setItemId(key.longValue());
         return item;
     }
 
     @Override
-    public void update(Long itemId, Item itemParam) {
-        String sql = "update item set item_name=?, price = ?, quantity = ? where item_id = ?";
-        jdbcTemplate.update(sql, itemParam.getItemName(), itemParam.getPrice(), itemParam.getQuantity(), itemParam.getItemId());
+    public void update(Long itemId, ItemUpdateForm form) {
+        String sql = "update item" +
+                     " set item_name=itemName, price=:price, quantity=:quantity" +
+                     " where id=:id = ?";
+
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("itemName", form.getItemName())
+                .addValue("price", form.getPrice())
+                .addValue("quantity", form.getQuantity())
+                .addValue("itemId", itemId);
+
+        jdbcTemplate.update(sql, param);
     }
 
     @Override
     public void updateCnt(Item item, Integer quantity) {
-        String sql = "update item set quantity = ? where item_id = ?";
-        jdbcTemplate.update(sql, quantity, item.getItemId());
+        String sql = "update item set quantity =:quantity" +
+                     "where item_id =:itemId";
+
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("itemId", item.getItemId())
+                .addValue("quantity", quantity);
+
+        jdbcTemplate.update(sql, param);
     }
 
     @Override
     public void delete(Long itemId) {
-        String sql = "delete from item where item_id = ?";
-        jdbcTemplate.update(sql, itemId);
+        String sql = "delete from item where item_id =:itemId";
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("itemId", itemId);
+        jdbcTemplate.update(sql, param);
     }
 
     @Override
     public Long findItemIdByItemNameAndMemberId(String itemName, Long memberId) {
         String sql = """
-        SELECT i.item_id 
+        SELECT i.item_id
         FROM item i
         JOIN member m ON i.member_id = m.member_id
-        WHERE i.item_name = ? AND m.member_id = ?
+        WHERE i.item_name =:itemName AND m.member_id =:memberId
     """;
-        return jdbcTemplate.queryForObject(sql, Long.class, itemName, memberId);
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("itemName", itemName)
+                .addValue("memberId", memberId);
+        return jdbcTemplate.queryForObject(sql, params, Long.class);
     }
 
     @Override
-    public Long findMemberIdByItemId(Long itemId){
+    public Long findMemberIdByItemId(Long itemId) {
         String sql = """
         SELECT m.member_id
         FROM member m
         JOIN item i
         ON i.member_id = m.member_id
-        WHERE i.item_id = ?
+        WHERE i.item_id = :itemId
         """;
-        return jdbcTemplate.queryForObject(sql, Long.class, itemId);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("itemId", itemId);
+
+        return jdbcTemplate.queryForObject(sql, params, Long.class);
     }
 
-    @Override
-    public Item findByItemId(Long itemId){
-        String sql = "select * from item where item_id = ?";
-        return jdbcTemplate.queryForObject(sql, itemRowMapper(), itemId);
-    };
 
     @Override
-    public Double findPriceByItemId(Long itemId){
-        String sql = "select price from item where item_id = ?";
-        return jdbcTemplate.queryForObject(sql, Double.class, itemId);
+    public Optional<Item> findByItemId(Long itemId){
+        String sql = "select item_id, item_name, price, quantity, member_id from item where item_id = :itemId?";
+        try{
+            Map<String, Object> param = Map.of("id", itemId);
+            Item item = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
+            return Optional.of(item);
+        } catch(EmptyResultDataAccessException e){
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -118,28 +158,27 @@ public class ItemRepositoryJdbc implements ItemRepository {
         }
 
         log.info("sql={}", sql);
-
-        NamedParameterJdbcTemplate namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
-        return namedJdbcTemplate.query(sql, param, itemRowMapper());
+        return jdbcTemplate.query(sql, param, itemRowMapper());
     }
 
+    @Override
+    public Double findPriceByItemId(Long itemId) {
+        String sql = "select price from item where item_id = :itemId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("itemId", itemId);
 
-    //쿼리 실행 결과를 객체로 매핑하여 반환
-    private RowMapper<Item> itemRowMapper() {
-        return (rs, rowNum) -> {
-            Item item = new Item();
-            item.setItemId(rs.getLong(1));
-            item.setItemName(rs.getString(2));
-            item.setPrice(rs.getInt(3));
-            item.setQuantity(rs.getInt(4));
-            item.setMemberId(rs.getLong(5));
-            return item;
-        };
+        return jdbcTemplate.queryForObject(sql, param, Double.class);
     }
+
 
     @Override
     public List<Item> findAll() {
         String sql = "select * from item";
         return jdbcTemplate.query(sql, itemRowMapper());
+    }
+
+    //쿼리 실행 결과를 객체로 매핑하여 반환
+    private RowMapper<Item> itemRowMapper() {
+            return BeanPropertyRowMapper.newInstance(Item.class);
     }
 }

@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@RequiredArgsConstructor
 @Data
 public class Item {
 
@@ -20,4 +19,13 @@ public class Item {
     private Integer quantity;
 
     private Long memberId;
+
+    public Item(){}
+
+    public Item(String itemName, Integer price, Long memberId, Integer quantity) {
+        this.itemName = itemName;
+        this.price = price;
+        this.memberId = memberId;
+        this.quantity = quantity;
+    }
 }
