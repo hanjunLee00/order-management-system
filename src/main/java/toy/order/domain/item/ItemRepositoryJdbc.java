@@ -3,7 +3,6 @@ package toy.order.domain.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,7 +33,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("item")
-                .usingGeneratedKeyColumns("id");
+                .usingGeneratedKeyColumns("itemId");
     }
 
     @Override
@@ -62,7 +61,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
 
     @Override
     public void updateCnt(Item item, Integer quantity) {
-        String sql = "update item set quantity =:quantity" +
+        String sql = "update item set quantity =:quantity " +
                      "where item_id =:itemId";
 
         SqlParameterSource param = new MapSqlParameterSource()
@@ -113,9 +112,10 @@ public class ItemRepositoryJdbc implements ItemRepository {
 
     @Override
     public Optional<Item> findByItemId(Long itemId){
-        String sql = "select item_id, item_name, price, quantity, member_id from item where item_id = :itemId?";
+
+        String sql = "select item_id, item_name, price, quantity, member_id from item where item_id =:itemId";
         try{
-            Map<String, Object> param = Map.of("id", itemId);
+            Map<String, Object> param = Map.of("itemId", itemId);
             Item item = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
             return Optional.of(item);
         } catch(EmptyResultDataAccessException e){

@@ -19,7 +19,6 @@ import toy.order.domain.member.Member;
 import toy.order.domain.member.MemberRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -41,7 +40,9 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public String item(@CurrentMember Member loginMember,
                        @PathVariable Long itemId, Model model){
-        Optional<Item> item = itemRepository.findByItemId(itemId);
+        Item item = itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
+
         model.addAttribute("item", item);
         model.addAttribute("member", loginMember);
         return "items/item";
@@ -87,7 +88,8 @@ public class ItemController {
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model){
-        Optional<Item> item = itemRepository.findByItemId(itemId);
+        Item item = itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
         model.addAttribute("item", item);
         return "items/editForm";
     }
@@ -115,11 +117,14 @@ public class ItemController {
     @GetMapping("/{uuid}/purchase/{itemId}")
     public String purchaseForm(@CurrentMember Member loginMember, Model model,
                                @PathVariable Long itemId, @PathVariable String uuid){
+
         if(memberRepository.findByUuid(uuid) == null){
             throw new IllegalArgumentException();
         }
 
-        Optional<Item> item = itemRepository.findByItemId(itemId);
+        Item item = itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
+
         model.addAttribute("item", item);
         model.addAttribute("member", loginMember);
         return "items/purchaseForm";
@@ -134,17 +139,15 @@ public class ItemController {
         int resultPrice = 0;
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
 
-        Optional<Item> item = itemRepository.findByItemId(itemId);
-        if (item.isEmpty()){
-            return "items/items";
-        }
+        Item item = itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
 
         log.info("Found item: {}", item);
 
-        if (item.get().getPrice() !=null && item.get().getQuantity() !=null){
-            resultPrice = item.get().getPrice()*form.getQuantity();
+        if (item.getPrice() !=null && item.getQuantity() !=null){
+            resultPrice = item.getPrice()*form.getQuantity();
             System.out.println("resultPrice = " + resultPrice);
-            if (form.getQuantity() > item.get().getQuantity())
+            if (form.getQuantity() > item.getQuantity())
                 bindingResult.rejectValue("quantity", "outOfStock", "재고 부족");
             if (resultPrice > loginMember.getBalance())
                 bindingResult.rejectValue("quantity", "insufficientBalance", "잔액 부족");
@@ -159,12 +162,13 @@ public class ItemController {
 
         Long fromId = loginMember.getMemberId();
         Long toId = itemRepository.findMemberIdByItemId(itemId);
-        itemService.purchase(fromId, toId, resultPrice, item.orElse(null), form.getQuantity());
+        itemService.purchase(fromId, toId, resultPrice, item, form.getQuantity());
 
         List<Item> itemList = itemRepository.findAll();
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
         model.addAttribute("items", itemList);
         model.addAttribute("member", loginMember);
+
         return "items/items";
     }
 
