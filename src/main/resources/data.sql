@@ -6,7 +6,7 @@ VALUES
 -- 사용자 2
 INSERT INTO MEMBER (LOGIN_ID, NAME, PASSWORD, UUID, BALANCE)
 VALUES
-    ('test2', '유저2', 'test', '015222c5-8048-4455-84f8-6afe5c3802a6', 0.0);
+    ('test2', '유저2', 'test', '015222c5-8048-4455-84f8-6afe5c3802a6', 0);
 
 
 -- 아이템 (사용자 1)

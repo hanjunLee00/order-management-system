@@ -46,6 +46,12 @@
               th:onclick="|location.href='@{/items/items}'|"
               type="button">상품 주문</button>
     </div>
+    <div class="col">
+      <button class="w-100 btn btn-success btn-lg"
+              onclick="location.href='/items/items'"
+              th:onclick="|location.href='@{/members/{uuid}/charge(uuid=${member.uuid})}'|"
+              type="button">추가 충전</button>
+    </div>
   </div>
 
 </main> <!-- /container -->

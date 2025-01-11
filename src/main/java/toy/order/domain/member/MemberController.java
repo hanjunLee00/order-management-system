@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.form.ChargeForm;
 
@@ -100,11 +101,36 @@ public class MemberController {
             return "members/chargeForm";
         }
 
+        //멤버를 uuid로 찾아서 충전 로직 수행
         Member member = memberRepository.findByUuid(uuid);
-        System.out.println("chargeForm = " + chargeForm.getAmount());
         memberService.charge(member, chargeForm.getAmount());
-        model.addAttribute("member", member);
+
+        //헤더값 업데이트를 위해 세션값 업데이트
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
-        return "/members/chargeSuccess";
+
+        //리다이렉트 페이지에서 값을 받아 사용하기 위해
+        session.setAttribute("member", member);
+        session.setAttribute("chargeForm", chargeForm);
+        return "redirect:/members/" + uuid + "/charge/success";
+    }
+
+    @GetMapping("/{uuid}/charge/success")
+    public String success(@PathVariable String uuid, HttpSession session, Model model){
+
+        if(!memberRepository.existsByUuid(uuid)){
+            return "redirect:/";
+        }
+
+        Member member = (Member) session.getAttribute("member");
+        ChargeForm chargeForm = (ChargeForm) session.getAttribute("chargeForm");
+
+        model.addAttribute("member", member);
+        model.addAttribute("chargeForm", chargeForm);
+
+        // 세션에서 데이터 제거 (PRG 패턴 완성)
+        session.removeAttribute("member");
+        session.removeAttribute("chargeForm");
+
+        return "members/chargeSuccess";
     }
 }

@@ -30,10 +30,12 @@ public class ItemController {
     private final MemberRepository memberRepository;
 
     @GetMapping("/items")
-    public String items(@CurrentMember Member loginMember, @ModelAttribute("itemSearch") ItemSearchCond itemSearch, Model model) {
+    public String items(@CurrentMember Member loginMember, @ModelAttribute("itemSearch") ItemSearchCond itemSearch,
+                        Model model, HttpSession session) {
         List<Item> itemList = itemRepository.findItems(itemSearch);
         model.addAttribute("items", itemList);
         model.addAttribute("member", loginMember);
+        session.setAttribute("itemSearch", itemSearch);
         return "items/items";
     }
 
@@ -134,7 +136,7 @@ public class ItemController {
     public String purchase(@CurrentMember Member loginMember, Model model,
                            @PathVariable Long itemId, @PathVariable String uuid,
                            @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult,
-                           HttpSession session){
+                           HttpSession session, RedirectAttributes redirectAttributes){
 
         int resultPrice = 0;
         log.info("Entering purchase method with uuid={}, itemId={}, form={}", uuid, itemId, form);
@@ -164,12 +166,16 @@ public class ItemController {
         Long toId = itemRepository.findMemberIdByItemId(itemId);
         itemService.purchase(fromId, toId, resultPrice, item, form.getQuantity());
 
-        List<Item> itemList = itemRepository.findAll();
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
-        model.addAttribute("items", itemList);
-        model.addAttribute("member", loginMember);
 
-        return "items/items";
+        ItemSearchCond itemSearchCond = (ItemSearchCond) session.getAttribute("itemSearch");
+        if (itemSearchCond != null) {
+            redirectAttributes.addAttribute("itemName", itemSearchCond.getItemName());
+            redirectAttributes.addAttribute("maxPrice", itemSearchCond.getMaxPrice());
+            // 필요한 다른 필드도 추가
+        }
+
+        return "redirect:/items/items";
     }
 
 }
