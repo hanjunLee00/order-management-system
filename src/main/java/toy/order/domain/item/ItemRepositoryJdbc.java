@@ -33,7 +33,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("item")
-                .usingGeneratedKeyColumns("itemId");
+                .usingGeneratedKeyColumns("ITEM_ID");
     }
 
     @Override
