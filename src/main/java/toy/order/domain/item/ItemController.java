@@ -89,7 +89,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}/edit")
-    public String editForm(@PathVariable Long itemId, Model model){
+    public String editForm(@CurrentMember Member loginMember, @PathVariable Long itemId, Model model){
+        if(loginMember == null){
+            return "/";
+        }
         Item item = itemRepository.findByItemId(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
         model.addAttribute("item", item);
