@@ -47,8 +47,8 @@ public class ItemRepositoryJdbc implements ItemRepository {
     @Override
     public void update(Long itemId, ItemUpdateForm form) {
         String sql = "update item" +
-                     " set item_name=itemName, price=:price, quantity=:quantity" +
-                     " where id=:id = ?";
+                     " set item_name=:itemName, price=:price, quantity=:quantity" +
+                     " where item_id=:itemId";
 
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("itemName", form.getItemName())
