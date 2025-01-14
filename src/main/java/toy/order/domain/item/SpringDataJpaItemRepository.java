@@ -13,9 +13,8 @@ public interface SpringDataJpaItemRepository extends JpaRepository<Item, Long> {
     // itemName과 memberId로 아이템 ID 검색
     Long findItemIdByItemNameAndMember(String itemName, Member member);
 
-    // 아이템 ID로 memberId 검색
-    @Query("SELECT Member m FROM Item i WHERE i.itemId = :itemId")
-    Member findMemberByItemId(Long itemId);
+    @Query("SELECT i.member FROM Item i WHERE i.itemId = :itemId")
+    Member findMemberByItemId(@Param("itemId") Long itemId);
 
     // 아이템 ID로 price 검색
     Double findPriceByItemId(Long itemId);

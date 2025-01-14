@@ -1,6 +1,8 @@
 package toy.order.domain.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -12,7 +14,8 @@ public interface SpringDataJpaMemberRepository extends JpaRepository<Member, Lon
 
     Long findMemberIdByLoginId(String loginId);
 
-    Integer findBalanceByUuid(String uuid);
+    @Query("SELECT m.balance FROM Member m WHERE m.uuid = :uuid")
+    Integer findBalanceByUuid(@Param("uuid") String uuid);
 
     String findNameByUuid(String uuid);
 

@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.dto.ChargeDto;
 import toy.order.domain.member.dto.MemberUpdateDto;
-
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -45,7 +43,8 @@ public class MemberController {
 
     @GetMapping("/{uuid}/edit")
     public String editForm(@PathVariable String uuid, Model model){
-        Optional<Member> member = memberRepository.findByUuid(uuid);
+        Member member = memberRepository.findByUuid(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with UUID: " + uuid));
         model.addAttribute("member", member);
         return "members/editMemberForm";
     }
@@ -57,10 +56,11 @@ public class MemberController {
             return "members/editMemberForm";
         }
         // 기존 회원 정보 조회
-        Optional<Member> existingMember = memberRepository.findByUuid(uuid);
+        Member existingMember = memberRepository.findByUuid(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with UUID: " + uuid));
 
         // 로그인 ID가 변경되었는지 확인
-        if (!existingMember.get().getLoginId().equals(updateDto.getLoginId())) {
+        if (!existingMember.getLoginId().equals(updateDto.getLoginId())) {
             // 로그인 ID 중복 검사
             if (memberRepository.existsByLoginId(updateDto.getLoginId())) {
                 bindingResult.rejectValue("loginId", "duplicate.member.loginId", "이미 존재하는 아이디입니다.");
@@ -79,7 +79,9 @@ public class MemberController {
             return "redirect:/";
         }
 
-        Optional<Member> member = memberRepository.findByUuid(uuid);
+        Member member = memberRepository.findByUuid(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with UUID: " + uuid));
+
         model.addAttribute("member", member);
         model.addAttribute("chargeDto", new ChargeDto());
         return "members/chargeForm";
@@ -103,8 +105,10 @@ public class MemberController {
         }
 
         //멤버를 uuid로 찾아서 충전 로직 수행
-        Optional<Member> member = memberRepository.findByUuid(uuid);
-        memberService.charge(member.orElse(null), chargeDto.getAmount());
+        Member member = memberRepository.findByUuid(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with UUID: " + uuid));
+
+        memberService.charge(member, chargeDto.getAmount());
 
         //헤더값 업데이트를 위해 세션값 업데이트
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
