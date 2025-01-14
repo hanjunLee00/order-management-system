@@ -1,13 +1,11 @@
-package toy.order.domain.item.form;
+package toy.order.domain.item.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 @Data
-public class ItemPurchaseForm {
+public class ItemPurchaseDto {
 
     @NotNull
     @Range(min = 1)

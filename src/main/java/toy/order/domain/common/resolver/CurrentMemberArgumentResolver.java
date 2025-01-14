@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -50,7 +51,7 @@ public class CurrentMemberArgumentResolver implements HandlerMethodArgumentResol
 
         Optional<Member> member = memberRepository.findByLoginId(loginId);
         System.out.println("member.toString() = " + member.toString());
-        
+
         // orElseThrow() 메서드로 Optional 내부의 Member 객체 꺼내 쓰기
         return memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UnauthorizedException("User not logged in"));

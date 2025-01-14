@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import toy.order.domain.member.Member;
 import toy.order.domain.member.MemberRepository;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,11 +26,11 @@ public class ItemService {
     // 상품을 구매하면 totalPrice를 계산해서 from에서 차감, to에서 증가
     private void purchaseLogic(Long fromId, Long toId, int money){
 
-        Member fromMember = memberRepository.findByMemberId(fromId);
-        Member toMember = memberRepository.findByMemberId(toId);
+        Optional<Member> fromMember = memberRepository.findById(fromId);
+        Optional<Member> toMember = memberRepository.findById(toId);
 
-        memberRepository.updateBalance(fromId, fromMember.getBalance() - money);
-        memberRepository.updateBalance(toId, toMember.getBalance() + money);
+        memberRepository.updateBalance(fromId, fromMember.get().getBalance() - money);
+        memberRepository.updateBalance(toId, toMember.get().getBalance() + money);
     }
 
     private void itemDeductLogic(Item item, Integer quantity){

@@ -9,7 +9,7 @@
     <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
 
     <form th:action="@{/members/{uuid}/charge(uuid=${member.uuid})}"
-          th:object="${chargeForm}" method="post">
+          th:object="${chargeDto}" method="post">
         <div class="text-center">
             <h2 th:text="#{page.chargeForm}">잔액 충전</h2>
         </div>

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import toy.order.domain.common.resolver.CurrentMember;
 import toy.order.domain.common.session.SessionConst;
-import toy.order.domain.item.form.ItemPurchaseForm;
-import toy.order.domain.item.form.ItemSaveForm;
-import toy.order.domain.item.form.ItemUpdateForm;
+import toy.order.domain.item.dto.ItemPurchaseDto;
+import toy.order.domain.item.dto.ItemSaveDto;
+import toy.order.domain.item.dto.ItemUpdateDto;
 import toy.order.domain.member.Member;
 import toy.order.domain.member.MemberRepository;
 
@@ -61,7 +61,7 @@ public class ItemController {
     @PostMapping("/add")
     public String addItem(@CurrentMember Member loginMember,
                           Model model,
-                          @Validated @ModelAttribute("item") ItemSaveForm form,
+                          @Validated @ModelAttribute("item") ItemSaveDto form,
                           BindingResult bindingResult, RedirectAttributes redirectAttributes){
         if (form.getPrice() != null && form.getQuantity() != null) {
             double resultPrice = form.getPrice()*form.getQuantity();
@@ -79,10 +79,10 @@ public class ItemController {
         item.setItemName(form.getItemName());
         item.setPrice(form.getPrice());
         item.setQuantity(form.getQuantity());
-        item.setMemberId(loginMember.getMemberId());
+        item.setMember(loginMember);
 
         Item savedItem = itemRepository.save(item);
-        Long itemId = itemRepository.findItemIdByItemNameAndMemberId(savedItem.getItemName(), loginMember.getMemberId());
+        Long itemId = itemRepository.findItemIdByItemNameAndMember(savedItem.getItemName(), loginMember);
         redirectAttributes.addAttribute("itemId", itemId);
         redirectAttributes.addAttribute("status", true);
         return "redirect:/items/{itemId}";
@@ -102,7 +102,7 @@ public class ItemController {
     @PostMapping("/{itemId}/edit")
     public String edit (
             @CurrentMember Member loginMember, Model model,
-            @PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult){
+            @PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateDto form, BindingResult bindingResult){
         if(form.getPrice() != null && form.getQuantity() != null) {
             int resultPrice = form.getPrice()*form.getQuantity();
             if (resultPrice < 10000) {
@@ -138,7 +138,7 @@ public class ItemController {
     @PostMapping("/{uuid}/purchase/{itemId}")
     public String purchase(@CurrentMember Member loginMember, Model model,
                            @PathVariable Long itemId, @PathVariable String uuid,
-                           @Valid @ModelAttribute("item")ItemPurchaseForm form, BindingResult bindingResult,
+                           @Valid @ModelAttribute("item") ItemPurchaseDto form, BindingResult bindingResult,
                            HttpSession session, RedirectAttributes redirectAttributes){
 
         int resultPrice = 0;
@@ -166,7 +166,8 @@ public class ItemController {
         }
 
         Long fromId = loginMember.getMemberId();
-        Long toId = itemRepository.findMemberIdByItemId(itemId);
+        Member toMember = itemRepository.findMemberByItemId(itemId);
+        Long toId = toMember.getMemberId();
         itemService.purchase(fromId, toId, resultPrice, item, form.getQuantity());
 
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));

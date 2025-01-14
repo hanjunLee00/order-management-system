@@ -1,4 +1,4 @@
-package toy.order.domain.item.form;
+package toy.order.domain.item.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +7,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 @Data
-public class ItemSaveForm {
+public class ItemSaveDto {
 
     @NotBlank
     private String itemName;

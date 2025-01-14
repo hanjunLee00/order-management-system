@@ -7,10 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import toy.order.domain.common.session.SessionConst;
-import toy.order.domain.member.form.ChargeForm;
+import toy.order.domain.member.dto.ChargeDto;
+import toy.order.domain.member.dto.MemberUpdateDto;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -44,29 +45,29 @@ public class MemberController {
 
     @GetMapping("/{uuid}/edit")
     public String editForm(@PathVariable String uuid, Model model){
-        Member member = memberRepository.findByUuid(uuid);
+        Optional<Member> member = memberRepository.findByUuid(uuid);
         model.addAttribute("member", member);
         return "members/editMemberForm";
     }
 
     @PostMapping("/{uuid}/edit")
-    public String update(@PathVariable String uuid, @Valid @ModelAttribute Member member,
+    public String update(@PathVariable String uuid, @Valid @ModelAttribute("member") MemberUpdateDto updateDto,
                          BindingResult bindingResult, HttpSession session) {
         if(bindingResult.hasErrors()){
             return "members/editMemberForm";
         }
         // 기존 회원 정보 조회
-        Member existingMember = memberRepository.findByUuid(uuid);
+        Optional<Member> existingMember = memberRepository.findByUuid(uuid);
 
         // 로그인 ID가 변경되었는지 확인
-        if (!existingMember.getLoginId().equals(member.getLoginId())) {
+        if (!existingMember.get().getLoginId().equals(updateDto.getLoginId())) {
             // 로그인 ID 중복 검사
-            if (memberRepository.existsByLoginId(member.getLoginId())) {
+            if (memberRepository.existsByLoginId(updateDto.getLoginId())) {
                 bindingResult.rejectValue("loginId", "duplicate.member.loginId", "이미 존재하는 아이디입니다.");
                 return "members/editMemberForm"; // 중복 시 에러 메시지와 함께 폼으로 돌아감
             }
         }
-        memberRepository.update(uuid, member.getName(), member.getLoginId(), member.getPassword());
+        memberRepository.update(uuid, updateDto.getName(), updateDto.getLoginId(), updateDto.getPassword());
         session.setAttribute(SessionConst.LOGIN_MEMBER_ID, memberRepository.findLoginIdByUuid(uuid));
         session.setAttribute(SessionConst.LOGIN_MEMBER_NAME, memberRepository.findNameByUuid(uuid));
         return "loginHome";
@@ -78,15 +79,15 @@ public class MemberController {
             return "redirect:/";
         }
 
-        Member member = memberRepository.findByUuid(uuid);
+        Optional<Member> member = memberRepository.findByUuid(uuid);
         model.addAttribute("member", member);
-        model.addAttribute("chargeForm", new ChargeForm());
+        model.addAttribute("chargeDto", new ChargeDto());
         return "members/chargeForm";
     }
 
     @PostMapping("/{uuid}/charge")
     public String charge(@PathVariable String uuid,
-                         @Valid @ModelAttribute ChargeForm chargeForm, BindingResult bindingResult,
+                         @Valid @ModelAttribute ChargeDto chargeDto, BindingResult bindingResult,
                          Model model, HttpSession session){
 
         if(bindingResult.hasErrors()){
@@ -95,22 +96,22 @@ public class MemberController {
         }
 
 
-        if(chargeForm.getAmount() < 1000){
+        if(chargeDto.getAmount() < 1000){
             bindingResult.rejectValue("amount", "minAmount", "1000원 이상의 단위를 입력하세요");
             model.addAttribute("member", memberRepository.findByUuid(uuid));
             return "members/chargeForm";
         }
 
         //멤버를 uuid로 찾아서 충전 로직 수행
-        Member member = memberRepository.findByUuid(uuid);
-        memberService.charge(member, chargeForm.getAmount());
+        Optional<Member> member = memberRepository.findByUuid(uuid);
+        memberService.charge(member.orElse(null), chargeDto.getAmount());
 
         //헤더값 업데이트를 위해 세션값 업데이트
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
 
         //리다이렉트 페이지에서 값을 받아 사용하기 위해
         session.setAttribute("member", member);
-        session.setAttribute("chargeForm", chargeForm);
+        session.setAttribute("chargeDto", chargeDto);
         return "redirect:/members/" + uuid + "/charge/success";
     }
 
@@ -122,14 +123,14 @@ public class MemberController {
         }
 
         Member member = (Member) session.getAttribute("member");
-        ChargeForm chargeForm = (ChargeForm) session.getAttribute("chargeForm");
+        ChargeDto chargeDto = (ChargeDto) session.getAttribute("chargeDto");
 
         model.addAttribute("member", member);
-        model.addAttribute("chargeForm", chargeForm);
+        model.addAttribute("chargeDto", chargeDto);
 
         // 세션에서 데이터 제거 (PRG 패턴 완성)
         session.removeAttribute("member");
-        session.removeAttribute("chargeForm");
+        session.removeAttribute("chargeDto");
 
         return "members/chargeSuccess";
     }

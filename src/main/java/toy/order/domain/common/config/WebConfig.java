@@ -1,12 +1,21 @@
 package toy.order.domain.common.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //import toy.order.domain.common.interceptor.LoginCheckInterceptor;
 import toy.order.domain.common.resolver.CurrentMemberArgumentResolver;
+import toy.order.domain.item.ItemService;
+import toy.order.domain.item.ItemRepository;
+import toy.order.domain.item.JpaItemRepositoryV2;
+import toy.order.domain.item.SpringDataJpaItemRepository;
+import toy.order.domain.member.JpaMemberRepositoryV2;
+import toy.order.domain.member.MemberRepository;
+import toy.order.domain.member.SpringDataJpaMemberRepository;
 
 import java.util.List;
 

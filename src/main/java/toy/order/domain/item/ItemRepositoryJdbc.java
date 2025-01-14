@@ -11,9 +11,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import toy.order.domain.item.form.ItemUpdateForm;
+import toy.order.domain.item.dto.ItemUpdateDto;
+import toy.order.domain.member.Member;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @Slf4j
 public class ItemRepositoryJdbc implements ItemRepository {
 
@@ -45,7 +45,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
     }
 
     @Override
-    public void update(Long itemId, ItemUpdateForm form) {
+    public void update(Long itemId, ItemUpdateDto form) {
         String sql = "update item" +
                      " set item_name=:itemName, price=:price, quantity=:quantity" +
                      " where item_id=:itemId";
@@ -80,7 +80,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
     }
 
     @Override
-    public Long findItemIdByItemNameAndMemberId(String itemName, Long memberId) {
+    public Long findItemIdByItemNameAndMember(String itemName, Member member) {
         String sql = """
         SELECT i.item_id
         FROM item i
@@ -89,25 +89,25 @@ public class ItemRepositoryJdbc implements ItemRepository {
     """;
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("itemName", itemName)
-                .addValue("memberId", memberId);
+                .addValue("member", member);
         return jdbcTemplate.queryForObject(sql, params, Long.class);
     }
 
     @Override
-    public Long findMemberIdByItemId(Long itemId) {
+    public Member findMemberByItemId(Long itemId) {
         String sql = """
-        SELECT m.member_id
-        FROM member m
-        JOIN item i
-        ON i.member_id = m.member_id
-        WHERE i.item_id = :itemId
-        """;
+    SELECT m.*
+    FROM member m
+    JOIN item i ON i.member_id = m.member_id
+    WHERE i.item_id = :itemId
+    """;
 
         Map<String, Object> params = new HashMap<>();
         params.put("itemId", itemId);
 
-        return jdbcTemplate.queryForObject(sql, params, Long.class);
+        return jdbcTemplate.queryForObject(sql, params, new BeanPropertyRowMapper<>(Member.class));
     }
+
 
 
     @Override

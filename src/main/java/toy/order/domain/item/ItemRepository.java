@@ -1,6 +1,7 @@
 package toy.order.domain.item;
 
-import toy.order.domain.item.form.ItemUpdateForm;
+import toy.order.domain.item.dto.ItemUpdateDto;
+import toy.order.domain.member.Member;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,7 @@ public interface ItemRepository {
 
     Item save (Item item);
 
-    void update(Long itemId, ItemUpdateForm form);
+    void update(Long itemId, ItemUpdateDto form);
 
     void updateCnt(Item item, Integer quantity);
 
@@ -17,9 +18,9 @@ public interface ItemRepository {
 
     Optional<Item> findByItemId(Long itemId);
 
-    Long findItemIdByItemNameAndMemberId(String itemName, Long memberId);
+    Long findItemIdByItemNameAndMember(String itemName, Member member);
 
-    Long findMemberIdByItemId(Long itemId);
+    Member findMemberByItemId(Long itemId);
 
     List<Item> findAll();
 

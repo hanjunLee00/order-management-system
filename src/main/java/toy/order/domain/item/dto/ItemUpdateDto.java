@@ -1,4 +1,4 @@
-package toy.order.domain.item.form;
+package toy.order.domain.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 @Data
-public class ItemUpdateForm {
+public class ItemUpdateDto {
     @NotNull
     private Long itemId;
 

@@ -1,6 +1,5 @@
 package toy.order.domain.member;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -50,15 +49,15 @@ public class MemberRepositoryJdbc implements MemberRepository {
     }
 
     @Override
-    public Member findByMemberId(Long memberId) {
+    public Optional<Member> findById(Long memberId) {
         String sql = "select * from member where member_id = ?";
-        return template.queryForObject(sql, memberRowMapper(), memberId);
+        return Optional.ofNullable(template.queryForObject(sql, memberRowMapper(), memberId));
     }
 
     @Override
-    public Member findByUuid(String uuid) {
+    public Optional<Member> findByUuid(String uuid) {
         String sql = "select * from member where uuid = ?";
-        return template.queryForObject(sql, memberRowMapper(), uuid);
+        return Optional.ofNullable(template.queryForObject(sql, memberRowMapper(), uuid));
     }
 
     //쿼리 실행 결과를 객체로 매핑하여 반환
