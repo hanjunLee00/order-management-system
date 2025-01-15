@@ -60,7 +60,7 @@ public class ItemRepositoryJdbc implements ItemRepository {
     }
 
     @Override
-    public void updateCnt(Item item, Integer quantity) {
+    public void deductCnt(Item item, Integer quantity) {
         String sql = "update item set quantity =:quantity " +
                      "where item_id =:itemId";
 
@@ -108,6 +108,13 @@ public class ItemRepositoryJdbc implements ItemRepository {
         return jdbcTemplate.queryForObject(sql, params, new BeanPropertyRowMapper<>(Member.class));
     }
 
+    @Override
+    public String findItemNameByItemId(Long itemId) {
+        String sql = "select item_name from item where item_id=:itemId";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("itemId", itemId);
+        return jdbcTemplate.queryForObject(sql, param, String.class);
+    }
 
 
     @Override
@@ -162,12 +169,12 @@ public class ItemRepositoryJdbc implements ItemRepository {
     }
 
     @Override
-    public Double findPriceByItemId(Long itemId) {
+    public Integer findPriceByItemId(Long itemId) {
         String sql = "select price from item where item_id = :itemId";
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("itemId", itemId);
 
-        return jdbcTemplate.queryForObject(sql, param, Double.class);
+        return jdbcTemplate.queryForObject(sql, param, Integer.class);
     }
 
 

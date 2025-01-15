@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}">
+    <meta charset="UTF-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <title>구매 성공</title>
+</head>
+<body>
+<header th:replace="~{header :: header}"></header> <!-- 공통 헤더 -->
+
+<main class="container" style="max-width: 600px; margin-top: 50px;">
+    <div class="text-center">
+        <h2 th:text="#{page.purchaseSuccess}">구매 완료</h2>
+    </div>
+
+    <div class="alert alert-success text-center" role="alert">
+        <p>
+            <strong>상품명:</strong>
+            <span th:text="${itemName}"></span>
+        </p>
+        <p>
+            <strong>결제 금액:</strong>
+            <span th:text="${itemPrice} + '원 x ' + ${purchaseCnt} + '개 = ' + (${purchaseCnt} * ${itemPrice}) + '원'"></span>
+        </p>
+        <p>
+            <strong>현재 잔액:</strong>
+            <span th:text="${member.balance} + '원'"></span>
+        </p>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <!-- 목록으로 버튼 -->
+        <a th:href="@{/items/items(itemName=${itemSearch.itemName}, maxPrice=${itemSearch.maxPrice})}"
+           class="btn btn-primary"
+           th:text="#{button.backToList}">
+            목록으로
+        </a>
+
+        <!-- 추가 주문 버튼 -->
+        <a th:href="@{/items/{uuid}/purchase/{itemId}(uuid = ${member.uuid}, itemId=${itemId})}"
+           class="btn btn-secondary"
+           th:text="#{button.additionalOrder}">
+            추가 주문
+        </a>
+    </div>
+</main>
+
+</body>
+</html>

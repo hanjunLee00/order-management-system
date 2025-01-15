@@ -32,8 +32,8 @@ public class JpaItemRepositoryV2 implements ItemRepository {
     }
 
     @Override
-    public void updateCnt(Item item, Integer quantity) {
-
+    public void deductCnt(Item item, Integer quantity) {
+        item.setQuantity(item.getQuantity() - quantity);
     }
 
     @Override
@@ -57,7 +57,12 @@ public class JpaItemRepositoryV2 implements ItemRepository {
     }
 
     @Override
-    public Double findPriceByItemId(Long itemId) {
+    public String findItemNameByItemId(Long itemId) {
+        return repository.findItemNameByItemId(itemId);
+    }
+
+    @Override
+    public Integer findPriceByItemId(Long itemId) {
         return repository.findPriceByItemId(itemId);
     }
 

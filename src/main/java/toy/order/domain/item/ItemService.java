@@ -34,8 +34,7 @@ public class ItemService {
     }
 
     private void itemDeductLogic(Item item, Integer quantity){
-        Integer updateQuantity = item.getQuantity() - quantity;
-        itemRepository.updateCnt(item, updateQuantity);
+        itemRepository.deductCnt(item, quantity);
     }
 
 }

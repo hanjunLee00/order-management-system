@@ -12,7 +12,7 @@ public interface ItemRepository {
 
     void update(Long itemId, ItemUpdateDto form);
 
-    void updateCnt(Item item, Integer quantity);
+    void deductCnt(Item item, Integer quantity);
 
     void delete(Long itemId);
 
@@ -22,9 +22,11 @@ public interface ItemRepository {
 
     Member findMemberByItemId(Long itemId);
 
+    String findItemNameByItemId(Long itemId);
+
     List<Item> findAll();
 
     List<Item> findItems(ItemSearchCond cond);
 
-    Double findPriceByItemId(Long itemId);
+    Integer findPriceByItemId(Long itemId);
 }
