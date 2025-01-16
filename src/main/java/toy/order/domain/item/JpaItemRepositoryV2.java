@@ -72,18 +72,19 @@ public class JpaItemRepositoryV2 implements ItemRepository {
     }
 
     @Override
-    public List<Item> findItems(ItemSearchCond cond){
+    public List<Item> findItems(ItemSearchCond cond) {
         String itemName = cond.getItemName();
         Integer maxPrice = cond.getMaxPrice();
 
-        if(StringUtils.hasText(itemName) && maxPrice != null) {
+        if (StringUtils.hasText(itemName) && maxPrice != null) {
             return repository.findItems("%" + itemName + "%", maxPrice);
-        }else if(StringUtils.hasText(itemName)) {
+        } else if (StringUtils.hasText(itemName)) {
             return repository.findByItemNameLike("%" + itemName + "%");
-        }else if(maxPrice != null) {
+        } else if (maxPrice != null) {
             return repository.findByPriceLessThanEqual(maxPrice);
-        }else
+        } else
             return repository.findAll();
     }
 }
+
 
