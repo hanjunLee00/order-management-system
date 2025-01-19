@@ -1,9 +1,6 @@
 package toy.order.domain.member;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +23,6 @@ public class Member {
 
     private String uuid;
 
-    private Integer balance;
+    private Integer balance = 0;
 
 }
