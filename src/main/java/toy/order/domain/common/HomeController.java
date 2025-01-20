@@ -36,7 +36,7 @@ public class HomeController {
     @GetMapping("/")
     public String homeLoginArgumentResolver(@CurrentMember Member loginMember, Model model) {
         if(loginMember == null) {
-            return "home";
+            return "login/loginForm";
         }
         model.addAttribute("member", loginMember);
         return "loginHome";

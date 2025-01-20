@@ -54,7 +54,7 @@ public class ItemController {
     @GetMapping("/add")
     public String addForm(@CurrentMember Member loginMember, Model model){
         Item newItem = new Item();
-        model.addAttribute("item",newItem);
+        model.addAttribute("item", newItem);
         model.addAttribute("member", loginMember);
         return "items/addForm";
     }
@@ -122,7 +122,13 @@ public class ItemController {
 
     @GetMapping("/{uuid}/purchase/{itemId}")
     public String purchaseForm(@CurrentMember Member loginMember, Model model,
-                               @PathVariable Long itemId, @PathVariable String uuid){
+                               @PathVariable Long itemId, @PathVariable String uuid,
+                               @RequestParam("buyQuantity") int buyQuantity,
+                               RedirectAttributes redirectAttributes){
+        if(loginMember == null){
+            redirectAttributes.addFlashAttribute("loginMessage", "로그인 후 구매할 수 있습니다.");
+            return "redirect:/items/items";
+        }
 
         if(memberRepository.findByUuid(uuid).isEmpty()){
             throw new IllegalArgumentException();
@@ -131,7 +137,11 @@ public class ItemController {
         Item item = itemRepository.findByItemId(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
 
+        ItemPurchaseDto purchaseDto = new ItemPurchaseDto();
+        purchaseDto.setQuantity(buyQuantity);
+
         model.addAttribute("item", item);
+        model.addAttribute("dto", purchaseDto);
         model.addAttribute("member", loginMember);
         return "items/purchaseForm";
     }
@@ -192,8 +202,8 @@ public class ItemController {
     }
 
     @GetMapping("{uuid}/purchase/success")
-    public String purchaseSuccess(@PathVariable String uuid, HttpSession session, Model model){
-        if(!memberRepository.existsByUuid(uuid)){
+    public String purchaseSuccess(@PathVariable String uuid, HttpSession session, Model model) {
+        if (!memberRepository.existsByUuid(uuid)) {
             return "redirect:/";
         }
         /**
@@ -203,13 +213,13 @@ public class ItemController {
          * 목록으로 / 추가주문
          */
 
-        Integer purchaseCnt =(Integer) session.getAttribute("purchaseCnt");
+        Integer purchaseCnt = (Integer) session.getAttribute("purchaseCnt");
         Integer itemPrice = (Integer) session.getAttribute("itemPrice");
         Long itemId = (Long) session.getAttribute("itemId");
         String itemName = (String) session.getAttribute("itemName");
 
         Member member = memberRepository.findByUuid(uuid)
-                        .orElseThrow(() -> new IllegalArgumentException("Member not found: " + uuid));
+                .orElseThrow(() -> new IllegalArgumentException("Member not found: " + uuid));
         ItemSearchCond itemSearch = (ItemSearchCond) session.getAttribute("itemSearch");
 
         model.addAttribute("itemName", itemName);

@@ -10,7 +10,7 @@
     <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
 
-    <form th:action="@{/items/{uuid}/purchase/{itemId}(uuid=${member.uuid},itemId=${item.itemId})}"  th:object="${item}" method="post">
+    <form th:action="@{/items/{uuid}/purchase/{itemId}(uuid=${member.uuid},itemId=${item.itemId})}"  th:object="${dto}" method="post">
 
         <div class="text-center">
             <h2 th:text="#{page.purchaseForm}">상품 구매</h2>
@@ -36,8 +36,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="purchaseQuantity" class="form-label" th:text="#{label.purchase.quantity}">구매 수량</label>
-            <input type="number" id="purchaseQuantity" th:field="*{quantity}"
+            <label for="buyQuantity" class="form-label" th:text="#{label.purchase.quantity}">구매 수량</label>
+            <input type="number" id="buyQuantity" th:field="*{quantity}"
                    th:errorclass="field-error" class="form-control" required>
             <div class="field-error" th:errors="*{quantity}">
                 구매 수량 오류
