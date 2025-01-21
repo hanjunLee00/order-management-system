@@ -1,10 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base :: head}"></head>
 <body>
+<header th:replace="~{header :: header}"></header> <!-- 공통 헤더 -->
+
+<main class="container" style="max-width: 800px; margin-top: 50px;">
+    <h2 class="text-center" th:text="#{page.cart}">장바구니</h2>
+
+    <!-- 로그인된 회원 정보 -->
+    <div class="mb-4">
+        <h5 th:text="#{label.member.info}">회원 정보</h5>
+        <p><strong th:text="#{label.member.name}">이름:</strong> <span th:text="${member.name}">회원 이름</span></p>
+    </div>
+
+    <!-- 장바구니 목록 -->
+    <div th:if="${cartList.isEmpty()}">
+        <p class="text-center text-muted" th:text="#{message.cart.empty}">장바구니에 상품이 없습니다.</p>
+    </div>
+
+    <div th:if="${!cartList.isEmpty()}">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th th:text="#{label.item.itemName}">상품명</th>
+                <th th:text="#{label.purchase.quantity}">수량</th>
+                <th th:text="#{label.item.price}">가격</th>
+                <th th:text="#{label.item.totalPrice}">총액</th>
+                <th th:text="#{label.cart.delete}">작업</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cart : ${cartList}">
+                <td>
+                    <span th:if="${cart.item != null}" th:text="${cart.item.itemName}">상품명</span>
+                    <span th:if="${cart.item == null}" class="text-danger">해당 상품이 존재하지 않습니다.</span>
+                </td>
+                <td>
+                    <form th:action="@{/cart/update/{itemId}(itemId=${cart.item != null ? cart.item.itemId : ''})}" method="post" style="display: inline;">
+                        <input type="hidden" name="cartId" th:value="${cart.cartId}">
+                        <input type="number" name="quantity" class="form-control form-control-sm d-inline-block"
+                               style="width: 70px;" th:value="${cart.quantity}" min="1" th:attr="max=${cart.item.quantity}" th:disabled="${cart.item == null}">
+                        <button type="submit" class="btn btn-primary btn-sm" th:disabled="${cart.item == null}">변경</button>
+                    </form>
+                </td>
+                <td>
+                    <span th:if="${cart.item !=null}" th:text="${cart.item.price}">상품 가격</span>
+                    <span th:if="${cart.item ==null}" th:text="${cart.item.price}">없음</span>
+                </td>
+                <td>
+                    <span th:if="${cart.item !=null}" th:text="${cart.item.price}*${cart.quantity}">총액</span>
+                    <span th:if="${cart.item ==null}" th:text="${cart.item.price}">없음</span>
+                </td>
+                <td>
+                    <form th:action="@{/cart/delete/{itemId}(itemId=${cart.item.itemId})}" method="post" style="display: inline;">
+                        <input type="hidden" name="cartId" th:value="${cart.cartId}">
+                        <button type="submit" class="btn btn-danger btn-sm" th:text="#{button.delete}" th:disabled="${cart.item == null}">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 총합 -->
+    <div class="text-end mt-4">
+        <h4>
+            <span th:text="#{label.cart.totalPrice}">총 금액:</span>
+        </h4>
+    </div>
+
+    <!-- 결제 및 뒤로가기 버튼 -->
+    <div class="text-center mt-4">
+        <a th:href="@{/items/items}" class="btn btn-secondary" th:text="#{button.continueShopping}">쇼핑 계속하기</a>
+        <!--장바구니에 담긴 상품 결제 폼 따로 작성 필요-->
+        <a th:href="@{/cart/purchase}" class="btn btn-success" th:text="#{button.checkout}">결제하기</a>
+    </div>
+</main>
 
 </body>
 </html>

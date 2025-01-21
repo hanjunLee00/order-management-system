@@ -56,7 +56,7 @@
                 <th th:text="#{label.item.itemId}">ID</th>
                 <th th:text="#{label.item.itemName}">상품명</th>
                 <th th:text="#{label.item.price}">가격</th>
-                <th th:text="#{label.item.quantity}"></th>
+                <th th:text="#{label.item.quantity}">수량</th>
                 <th th:text="#{label.item.memberId}">판매자<th>
                 <th th:text="#{label.item.buyQuantity}">구매수량</th>
                 <th th:text="#{label.item.addCartQuantity}">장바구니</th>
@@ -79,7 +79,7 @@
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{/cart/add}" method="get" style="display: inline;">
+                    <form th:action="@{/cart/add/{itemId}(itemId=${item.itemId})}" method="post" style="display: inline;">
                         <input type="number" name="buyQuantity" class="form-control d-inline-block" style="width: 80px;"
                                min="1" th:attr="max=${item.quantity}" placeholder="개수 입력" value="1" />
                         <button type="submit" class="btn btn-primary">장바구니</button>

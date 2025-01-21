@@ -17,8 +17,10 @@ public interface SpringDataJpaMemberRepository extends JpaRepository<Member, Lon
     @Query("SELECT m.balance FROM Member m WHERE m.uuid = :uuid")
     Integer findBalanceByUuid(@Param("uuid") String uuid);
 
+    @Query("SELECT m.name FROM Member m WHERE m.uuid=:uuid")
     String findNameByUuid(String uuid);
 
+    @Query("SELECT m.loginId FROM Member m WHERE m.uuid =:uuid")
     String findLoginIdByUuid(String uuid);
 
     Boolean existsByLoginId(String loginId);

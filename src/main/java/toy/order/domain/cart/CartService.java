@@ -8,9 +8,17 @@ import java.util.Optional;
 @Service
 public interface CartService {
 
-    Cart add(Cart cart);
+    Optional<Cart> findByItemIdAndMemberId(Long itemId, Long memberId);
 
-    void delete(Cart cart);
+    Cart create(Cart cart);
+
+    Integer findItemQuantityByCartId(Long cartId);
+
+    void add(Integer quantity, Long itemId, Long memberId);
+
+    void delete(Long cartId);
+
+    void update(Integer quantity, Long itemId, Long memberId);
 
     List<Cart> findByMemberId(Long memberId);
 

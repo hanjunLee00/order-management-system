@@ -51,7 +51,7 @@ public class MemberController {
 
     @PostMapping("/{uuid}/edit")
     public String update(@PathVariable String uuid, @Valid @ModelAttribute("member") MemberUpdateDto updateDto,
-                         BindingResult bindingResult, HttpSession session) {
+                         BindingResult bindingResult, HttpSession session, Model model) {
         if(bindingResult.hasErrors()){
             return "members/editMemberForm";
         }
@@ -70,6 +70,7 @@ public class MemberController {
         memberRepository.update(uuid, updateDto.getName(), updateDto.getLoginId(), updateDto.getPassword());
         session.setAttribute(SessionConst.LOGIN_MEMBER_ID, memberRepository.findLoginIdByUuid(uuid));
         session.setAttribute(SessionConst.LOGIN_MEMBER_NAME, memberRepository.findNameByUuid(uuid));
+        model.addAttribute("member", existingMember);
         return "loginHome";
     }
 
