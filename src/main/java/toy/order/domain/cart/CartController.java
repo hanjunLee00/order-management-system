@@ -42,11 +42,6 @@ public class CartController {
                           RedirectAttributes redirectAttributes) {
         Item item = itemRepository.findByItemId(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 아이템입니다: " + itemId));
-        /**
-         * 장바구니에 같은 아이템이 없으면 create
-         * create 하려면 = quantity, member(memberId), item(itemId) 필요함
-         * 장바구니에 같은 아이템이 있으면 update (개수 추가)
-         */
 
         Optional<Cart> existItem = cartService.findByItemIdAndMemberId(itemId, loginMember.getMemberId());
 
