@@ -79,4 +79,9 @@ public class CartController {
         cartService.delete(cartId);
         return "redirect:/cart";
     }
+
+//    @GetMapping("/purchase")
+//    public String purchaseForm(@CurrentMember Member loginMember, Model model) {
+//
+//    }
 }

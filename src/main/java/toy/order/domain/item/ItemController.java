@@ -137,6 +137,7 @@ public class ItemController {
         Item item = itemRepository.findByItemId(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
 
+        //
         ItemPurchaseDto purchaseDto = new ItemPurchaseDto();
         purchaseDto.setQuantity(buyQuantity);
 
@@ -149,7 +150,7 @@ public class ItemController {
     @PostMapping("/{uuid}/purchase/{itemId}")
     public String purchase(@CurrentMember Member loginMember, Model model,
                            @PathVariable Long itemId, @PathVariable String uuid,
-                           @Valid @ModelAttribute("item") ItemPurchaseDto dto, BindingResult bindingResult,
+                           @Validated @ModelAttribute("item") ItemPurchaseDto dto, BindingResult bindingResult,
                            HttpSession session){
 
         int resultPrice = 0;
@@ -161,25 +162,28 @@ public class ItemController {
         log.info("Found item: {}", item);
 
         if (item.getPrice() !=null && item.getQuantity() !=null){
-            resultPrice = item.getPrice()*dto.getQuantity();
+            resultPrice = item.getPrice() * dto.getQuantity();
             System.out.println("resultPrice = " + resultPrice);
             if (dto.getQuantity() > item.getQuantity())
-                bindingResult.rejectValue("quantity", "outOfStock", "재고 부족");
+                bindingResult.reject("outOfStock", "재고 부족");
             if (resultPrice > loginMember.getBalance())
-                bindingResult.rejectValue("quantity", "insufficientBalance", "잔액 부족");
+                bindingResult.reject("insufficientBalance", "잔액 부족");
         }
 
         if (bindingResult.hasErrors()){
             System.out.println("bindingResult = " + bindingResult);
             model.addAttribute("member", loginMember);
             model.addAttribute("item", item);
+            model.addAttribute("dto", dto);
             return "items/purchaseForm";
         }
 
+        // ==== 서비스 로직 시작 ====
         Long fromId = loginMember.getMemberId();
         Member toMember = itemRepository.findMemberByItemId(itemId);
         Long toId = toMember.getMemberId();
         itemService.purchase(fromId, toId, resultPrice, item, dto.getQuantity());
+        // ==== 서비스 로직 종료 ====
 
         session.setAttribute(SessionConst.LOGIN_MEMBER_BALANCE, memberRepository.findBalanceByUuid(uuid));
 
@@ -190,13 +194,6 @@ public class ItemController {
         session.setAttribute("itemPrice", itemPrice);
         session.setAttribute("itemId", itemId);
         session.setAttribute("itemName", itemName);
-
-//        ItemSearchCond itemSearchCond = (ItemSearchCond) session.getAttribute("itemSearch");
-//        if (itemSearchCond != null) {
-//            redirectAttributes.addAttribute("itemName", itemSearchCond.getItemName());
-//            redirectAttributes.addAttribute("maxPrice", itemSearchCond.getMaxPrice());
-//            // 필요한 다른 필드도 추가
-//        }
 
         return "redirect:/items/" + uuid + "/purchase/success";
     }

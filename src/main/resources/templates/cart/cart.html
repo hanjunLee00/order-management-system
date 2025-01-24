@@ -39,7 +39,7 @@
                     <form th:action="@{/cart/update/{itemId}(itemId=${cart.item != null ? cart.item.itemId : ''})}" method="post" style="display: inline;">
                         <input type="hidden" name="cartId" th:value="${cart.cartId}">
                         <input type="number" name="quantity" class="form-control form-control-sm d-inline-block"
-                               style="width: 70px;" th:value="${cart.quantity}" min="1" th:attr="max=${cart.item.quantity}" th:disabled="${cart.item == null}">
+                               style="width: 70px;" th:value="${cart.quantity}" min="1" th:attr="max=${cart.item.quantity}, required=${cart.item != null}" th:disabled="${cart.item == null}">
                         <button type="submit" class="btn btn-primary btn-sm" th:disabled="${cart.item == null}">변경</button>
                     </form>
                 </td>
