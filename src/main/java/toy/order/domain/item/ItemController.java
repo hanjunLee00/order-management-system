@@ -94,8 +94,17 @@ public class ItemController {
         if(loginMember == null){
             return "/";
         }
+
         Item item = itemRepository.findByItemId(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
+
+        if(loginMember != item.getMember()) {
+            model.addAttribute("item", item);
+            model.addAttribute("notOwner", true);
+
+            return "redirect:/items/{itemId}";
+        }
+
         model.addAttribute("item", item);
         return "items/editForm";
     }
