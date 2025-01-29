@@ -132,7 +132,7 @@ public class ItemController {
     @GetMapping("/{uuid}/purchase/{itemId}")
     public String purchaseForm(@CurrentMember Member loginMember, Model model,
                                @PathVariable Long itemId, @PathVariable String uuid,
-                               @RequestParam("buyQuantity") int buyQuantity,
+                               @RequestParam(value = "buyQuantity", required = false, defaultValue = "1") int buyQuantity,
                                RedirectAttributes redirectAttributes){
         if(loginMember == null){
             redirectAttributes.addFlashAttribute("loginMessage", "로그인 후 구매할 수 있습니다.");
