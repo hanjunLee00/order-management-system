@@ -52,6 +52,7 @@ public class CartController {
 
         ItemSearchCond itemSearch = (ItemSearchCond) session.getAttribute("itemSearch");
         redirectAttributes.addFlashAttribute("itemSearch", itemSearch);
+        redirectAttributes.addFlashAttribute("cartMessage", "장바구니에 상품이 추가되었습니다.");
 
         return "redirect:/items/items";
     }
@@ -74,12 +75,11 @@ public class CartController {
     @PostMapping("/delete/{itemId}")
     public String deleteCart(@CurrentMember Member loginMember, @PathVariable Long itemId, @RequestParam Long cartId) {
         itemRepository.findByItemId(itemId)
-                .orElseThrow(()-> new IllegalArgumentException("유효하지 않은 아이템입니다." + itemId));
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 아이템입니다." + itemId));
 
         cartService.delete(cartId);
         return "redirect:/cart";
     }
-
 //    @GetMapping("/purchase")
 //    public String purchaseForm(@CurrentMember Member loginMember, Model model) {
 //

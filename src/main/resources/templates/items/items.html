@@ -49,6 +49,11 @@
     </form>
 
     <hr class="my-4">
+    <!-- 로그인 메시지 표시 -->
+    <div th:if="${loginMessage}" class="alert alert-warning" role="alert" th:text="${loginMessage}"></div>
+<!--    <div th:if="${cartMessage}" class="alert alert-success" role="alert">-->
+<!--        <span th:text="${cartMessage}"></span>-->
+<!--    </div>-->
     <div>
         <table class="table">
             <thead>
@@ -87,11 +92,18 @@
                 </td>
             </tr>
             </tbody>
-            <!-- 로그인 메시지 표시 -->
-            <div th:if="${loginMessage}" class="alert alert-warning" role="alert" th:text="${loginMessage}"></div>
         </table>
     </div>
 </main> <!-- /container -->
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var cartMessage = /*[[${cartMessage}]]*/ null;
+    if (cartMessage) {
+        alert(cartMessage);
+    }
+    /*]]>*/
+</script>
 
 </body>
 </html>
