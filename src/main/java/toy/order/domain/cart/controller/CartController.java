@@ -1,4 +1,4 @@
-package toy.order.domain.cart;
+package toy.order.domain.cart.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -7,12 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import toy.order.domain.cart.Cart;
+import toy.order.domain.cart.service.CartService;
 import toy.order.domain.common.resolver.CurrentMember;
 import toy.order.domain.item.Item;
-import toy.order.domain.item.ItemRepository;
-import toy.order.domain.item.ItemSearchCond;
+import toy.order.domain.item.repository.ItemRepository;
+import toy.order.domain.item.dto.ItemSearchCond;
 import toy.order.domain.member.Member;
-import toy.order.domain.member.MemberRepository;
+import toy.order.domain.member.repository.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;

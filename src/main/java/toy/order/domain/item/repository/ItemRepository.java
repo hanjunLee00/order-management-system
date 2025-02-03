@@ -1,5 +1,7 @@
-package toy.order.domain.item;
+package toy.order.domain.item.repository;
 
+import toy.order.domain.item.Item;
+import toy.order.domain.item.dto.ItemSearchCond;
 import toy.order.domain.item.dto.ItemUpdateDto;
 import toy.order.domain.member.Member;
 

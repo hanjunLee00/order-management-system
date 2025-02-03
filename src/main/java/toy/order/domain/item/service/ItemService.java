@@ -1,11 +1,13 @@
-package toy.order.domain.item;
+package toy.order.domain.item.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import toy.order.domain.item.Item;
+import toy.order.domain.item.repository.ItemRepository;
 import toy.order.domain.member.Member;
-import toy.order.domain.member.MemberRepository;
+import toy.order.domain.member.repository.MemberRepository;
 
 import java.util.Optional;
 

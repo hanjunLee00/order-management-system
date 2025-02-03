@@ -1,4 +1,6 @@
-package toy.order.domain.member;
+package toy.order.domain.member.repository;
+
+import toy.order.domain.member.Member;
 
 import java.util.List;
 import java.util.Optional;

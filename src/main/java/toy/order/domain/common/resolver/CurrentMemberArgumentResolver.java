@@ -1,10 +1,7 @@
 package toy.order.domain.common.resolver;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -15,7 +12,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import toy.order.domain.common.exception.UnauthorizedException;
 import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.Member;
-import toy.order.domain.member.MemberRepository;
+import toy.order.domain.member.repository.MemberRepository;
 
 import javax.security.auth.login.LoginException;
 import java.util.Optional;

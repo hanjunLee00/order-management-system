@@ -1,16 +1,13 @@
 package toy.order.domain.common;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import toy.order.domain.common.resolver.CurrentMember;
-import toy.order.domain.common.session.SessionConst;
 import toy.order.domain.member.Member;
-import toy.order.domain.member.MemberRepositoryJdbc;
+import toy.order.domain.member.repository.MemberRepositoryJdbc;
 
 @Slf4j
 @Controller

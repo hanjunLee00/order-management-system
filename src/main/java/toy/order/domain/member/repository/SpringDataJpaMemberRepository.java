@@ -1,8 +1,9 @@
-package toy.order.domain.member;
+package toy.order.domain.member.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import toy.order.domain.member.Member;
 
 import java.util.Optional;
 

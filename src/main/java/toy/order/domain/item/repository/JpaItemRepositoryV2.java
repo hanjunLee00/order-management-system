@@ -1,9 +1,11 @@
-package toy.order.domain.item;
+package toy.order.domain.item.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import toy.order.domain.item.Item;
+import toy.order.domain.item.dto.ItemSearchCond;
 import toy.order.domain.item.dto.ItemUpdateDto;
 import toy.order.domain.member.Member;
 

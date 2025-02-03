@@ -1,4 +1,4 @@
-package toy.order.domain.member;
+package toy.order.domain.member.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -8,8 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import toy.order.domain.common.session.SessionConst;
+import toy.order.domain.member.Member;
+import toy.order.domain.member.service.MemberService;
 import toy.order.domain.member.dto.ChargeDto;
 import toy.order.domain.member.dto.MemberUpdateDto;
+import toy.order.domain.member.repository.MemberRepository;
+
 import java.util.UUID;
 
 @Controller

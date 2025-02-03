@@ -1,4 +1,4 @@
-package toy.order.domain.item;
+package toy.order.domain.item.repository;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+import toy.order.domain.item.Item;
+import toy.order.domain.item.dto.ItemSearchCond;
 
 import java.util.List;
 import static toy.order.domain.item.QItem.item;

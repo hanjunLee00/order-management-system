@@ -1,4 +1,4 @@
-package toy.order.domain.item;
+package toy.order.domain.item.dto;
 
 import lombok.Data;
 

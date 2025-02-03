@@ -1,11 +1,11 @@
-package toy.order.domain.item;
+package toy.order.domain.item.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import toy.order.domain.item.Item;
 import toy.order.domain.member.Member;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface SpringDataJpaItemRepository extends JpaRepository<Item, Long> {

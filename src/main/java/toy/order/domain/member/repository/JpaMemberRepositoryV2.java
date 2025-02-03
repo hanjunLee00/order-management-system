@@ -1,10 +1,11 @@
-package toy.order.domain.member;
+package toy.order.domain.member.repository;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import toy.order.domain.member.Member;
 
 import java.util.List;
 import java.util.Optional;
