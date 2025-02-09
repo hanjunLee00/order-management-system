@@ -1,6 +1,7 @@
 package toy.order.domain.item.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -161,7 +162,7 @@ public class ItemController {
     @PostMapping("/{uuid}/purchase/{itemId}")
     public String purchase(@CurrentMember Member loginMember, Model model,
                            @PathVariable Long itemId, @PathVariable String uuid,
-                           @Validated @ModelAttribute("item") ItemPurchaseDto dto, BindingResult bindingResult,
+                           @Valid @ModelAttribute("item") ItemPurchaseDto dto, BindingResult bindingResult,
                            HttpSession session){
 
         int resultPrice = 0;

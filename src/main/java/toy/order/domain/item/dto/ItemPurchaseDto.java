@@ -8,7 +8,7 @@ import toy.order.domain.item.Item;
 @Data
 public class ItemPurchaseDto {
 
-    @NotNull
+    @NotNull(message = "개수 입력은 필수입니다")
     @Range(min = 1)
     private Integer quantity;
 }

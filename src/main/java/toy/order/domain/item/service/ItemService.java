@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import toy.order.domain.item.Item;
+import toy.order.domain.item.ex.OutOfStockException;
 import toy.order.domain.item.repository.ItemRepository;
 import toy.order.domain.member.Member;
 import toy.order.domain.member.repository.MemberRepository;
@@ -35,8 +36,9 @@ public class ItemService {
         memberRepository.updateBalance(toId, toMember.get().getBalance() + money);
     }
 
-    private void itemDeductLogic(Item item, Integer quantity){
-        itemRepository.deductCnt(item, quantity);
+    private void itemDeductLogic(Item item, Integer quantity) {
+        if(item.getQuantity() < quantity){
+            throw new OutOfStockException("재고 부족");
+        } else itemRepository.deductCnt(item, quantity);
     }
-
 }
