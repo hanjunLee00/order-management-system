@@ -97,21 +97,20 @@ public class MemberController {
                          @Valid @ModelAttribute ChargeDto chargeDto, BindingResult bindingResult,
                          Model model, HttpSession session){
 
-        if(bindingResult.hasErrors()){
-            model.addAttribute("member", memberRepository.findByUuid(uuid));
-            return "members/chargeForm";
-        }
-
-
-        if(chargeDto.getAmount() < 1000){
-            bindingResult.rejectValue("amount", "minAmount", "1000원 이상의 단위를 입력하세요");
-            model.addAttribute("member", memberRepository.findByUuid(uuid));
-            return "members/chargeForm";
-        }
-
         //멤버를 uuid로 찾아서 충전 로직 수행
         Member member = memberRepository.findByUuid(uuid)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found with UUID: " + uuid));
+
+        if(bindingResult.hasErrors()){
+            model.addAttribute("member", member);
+            return "members/chargeForm";
+        }
+
+        if(chargeDto.getAmount() < 1000){
+            bindingResult.rejectValue("amount", "minAmount", "1000원 이상의 단위를 입력하세요");
+            model.addAttribute("member", member);
+            return "members/chargeForm";
+        }
 
         memberService.charge(member, chargeDto.getAmount());
 
